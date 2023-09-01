@@ -10,10 +10,6 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  color: var(--secondary-color);
-}
-
 #bg-container {
   min-height: 100vh;
   max-height: max-content;
