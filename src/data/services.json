@@ -1,0 +1,147 @@
+[
+  {
+    "name": "Basic Alterations",
+    "description": "Hemming Pants/Jeans",
+    "price": 15
+  },
+  {
+    "name": "Basic Alterations",
+    "description": "Shortening Sleeves",
+    "price": 20
+  },
+  {
+    "name": "Basic Alterations",
+    "description": "Taking in/Letting out Waist",
+    "price": 25
+  },
+  {
+    "name": "Basic Alterations",
+    "description": "Shortening Skirt/Dress",
+    "price": 20
+  },
+  {
+    "name": "Complex Alterations",
+    "description": "Tapering Pants/Leggings",
+    "price": 30
+  },
+  {
+    "name": "Complex Alterations",
+    "description": "Reshaping Jacket Shoulders",
+    "price": 40
+  },
+  {
+    "name": "Complex Alterations",
+    "description": "Reattaching Zipper",
+    "price": 25
+  },
+  {
+    "name": "Complex Alterations",
+    "description": "Adjusting Suit Jacket Sleeves",
+    "price": 35
+  },
+  {
+    "name": "Formal Attire",
+    "description": "Hemming Evening Gown",
+    "price": 40
+  },
+  {
+    "name": "Formal Attire",
+    "description": "Adding/Removing Dress Straps",
+    "price": 25
+  },
+  {
+    "name": "Formal Attire",
+    "description": "Bustle for Wedding Dress",
+    "price": 50
+  },
+  {
+    "name": "Formal Attire",
+    "description": "Tuxedo Adjustments",
+    "price": 30
+  },
+  {
+    "name": "Repairs",
+    "description": "Patching Holes/Tears",
+    "price": 10
+  },
+  {
+    "name": "Repairs",
+    "description": "Replacing Buttons/Snaps",
+    "price": 5
+  },
+  {
+    "name": "Repairs",
+    "description": "Fixing Seams",
+    "price": 15
+  },
+  {
+    "name": "Custom Clothing",
+    "description": "Custom Shirt/Blouse",
+    "price": 60
+  },
+  {
+    "name": "Custom Clothing",
+    "description": "Custom Skirt/Trousers",
+    "price": 70
+  },
+  {
+    "name": "Custom Clothing",
+    "description": "Custom Dress",
+    "price": 100
+  },
+  {
+    "name": "Custom Clothing",
+    "description": "Custom Suit",
+    "price": 150
+  },
+  {
+    "name": "Bridal Services",
+    "description": "Bridal Gown Alterations",
+    "price": 50
+  },
+  {
+    "name": "Bridal Services",
+    "description": "Veil Customization",
+    "price": 30
+  },
+  {
+    "name": "Bridal Services",
+    "description": "Bridesmaid Dress Alterations",
+    "price": 25
+  },
+  {
+    "name": "Special Services",
+    "description": "Leather Garment Alterations",
+    "price": 40
+  },
+  {
+    "name": "Special Services",
+    "description": "Tailoring for Delicate Fabrics",
+    "price": 30
+  },
+  {
+    "name": "Special Services",
+    "description": "Vintage Clothing Restoration",
+    "price": 20
+  },
+  {
+    "name": "Express Services (Additional Charges)",
+    "description": "Same-Day Alterations",
+    "price": 0.5
+  },
+  {
+    "name": "Express Services (Additional Charges)",
+    "description": "24 to 48 Hour Turnaround",
+    "price": 0.25
+  },
+  {
+    "name": "Consultation Fees",
+    "description": "Fitting Consultation (redeemable)",
+    "price": 20
+  },
+  {
+    "name": "Consultation Fees",
+    "description": "Custom Clothing Design Consultation",
+    "price": 30
+  }
+]
