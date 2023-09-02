@@ -9,6 +9,7 @@ const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
     fontWeight="normal"
     position={"relative"}
     _hover={{
+      // fontWeight: "semibold",
       transform: "scale(1.1)",
       "::after": {
         content: "''",
@@ -30,70 +31,63 @@ export function AppMenu() {
   const { user, signIn, auth } = useAuth();
 
   return (
-    <Box
-      position="sticky"
-      top="0"
-      bg="white" /* Set your desired background color */
-      zIndex="10" /* Set an appropriate z-index value */
-    >
-      <Grid gridTemplateColumns={"repeat(6, minmax(0, 1fr))"}>
-        <LinkWrapper>
-          <Link href={"/"}>Home</Link>
-        </LinkWrapper>
+    <Grid gridTemplateColumns={"repeat(6, minmax(0, 1fr))"}>
+      <LinkWrapper>
+        <Link href={"/"}>Home</Link>
+      </LinkWrapper>
 
+      <LinkWrapper>
+        <Link
+          href={{
+            hash: "#services",
+          }}
+        >
+          Services
+        </Link>
+      </LinkWrapper>
+      <LinkWrapper>
+        <Link
+          href={{
+            hash: "#gallery",
+          }}
+        >
+          Gallery
+        </Link>
+      </LinkWrapper>
+      <LinkWrapper>
+        <Link
+          href={{
+            hash: "#about",
+          }}
+        >
+          About
+        </Link>
+      </LinkWrapper>
+      <LinkWrapper>
+        <Link
+          href={{
+            hash: "#contact",
+          }}
+        >
+          Contact
+        </Link>
+      </LinkWrapper>
+      {user !== undefined && (
         <LinkWrapper>
           <Link
-            href={{
-              hash: "#services",
+            href={"/"}
+            onClick={() => {
+              if (user) {
+                auth.signOut();
+              } else {
+                signIn();
+              }
             }}
           >
-            Services
+            {user ? "Logout" : "Login"}
           </Link>
         </LinkWrapper>
-        <LinkWrapper>
-          <Link
-            href={{
-              hash: "#gallery",
-            }}
-          >
-            Gallery
-          </Link>
-        </LinkWrapper>
-        <LinkWrapper>
-          <Link
-            href={{
-              hash: "#about",
-            }}
-          >
-            About
-          </Link>
-        </LinkWrapper>
-        <LinkWrapper>
-          <Link
-            href={{
-              hash: "#contact",
-            }}
-          >
-            Contact
-          </Link>
-        </LinkWrapper>
-        {user !== undefined && (
-          <LinkWrapper>
-            <Link
-              href={"/"}
-              onClick={() => {
-                if (user) {
-                  auth.signOut();
-                } else {
-                  signIn();
-                }
-              }}
-            >
-              {user ? "Logout" : "Login"}
-            </Link>
-          </LinkWrapper>
-        )}
-      </Grid>
-    </Box>
+      )}
+    </Grid>
   );
 }
