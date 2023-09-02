@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Heading, Box } from "@chakra-ui/react";
+import { Heading, Box, Container } from "@chakra-ui/react";
 import { Gallery as ReactGallery } from "react-grid-gallery";
 
 const fetchImages = async () => {
@@ -24,8 +24,8 @@ export const Gallery = () => {
   }, []);
 
   return (
-    <Box id="gallery" marginX={10}>
+    <Container id="gallery">
       <ReactGallery images={images} />
-    </Box>
+    </Container>
   );
 };

@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div id="bg-container">
+        <div className="bg-pattern" id="container">
           <Providers>{children}</Providers>
         </div>
       </body>

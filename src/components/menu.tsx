@@ -31,7 +31,7 @@ export function AppMenu() {
   const { user, signIn, auth } = useAuth();
 
   return (
-    <Grid gridTemplateColumns={"repeat(6, minmax(0, 1fr))"}>
+    <Grid gridTemplateColumns={"repeat(6, minmax(0, 1fr))"} marginBottom={5}>
       <LinkWrapper>
         <Link href={"/"}>Home</Link>
       </LinkWrapper>
