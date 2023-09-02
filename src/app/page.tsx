@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <SimpleGrid columns={1} spacing={20}>
       <Container>
-        <Grid templateColumns="repeat(5, 1fr)" gap={2} paddingTop={3}>
+        <Grid templateColumns="repeat(5, 1fr)" gap={2}>
           <GridItem colSpan={5}>
             <Logo />
           </GridItem>
