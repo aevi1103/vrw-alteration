@@ -10,80 +10,31 @@ import {
   Center,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { AppMenu, Services, Gallery, About } from "@/components";
+import { AppMenu, Services, Gallery, About, Logo } from "@/components";
 import Image from "next/image";
 import Link from "next/link";
+import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
+import { useState } from "react";
 
 export default function Home() {
+  const [scrollY, setScrollY] = useState(window.scrollY);
+  const onWindowScroll = useWindowScroll();
+
+  onWindowScroll((event) => {
+    setScrollY(window.scrollY);
+  });
+
+  console.log(scrollY);
+
   return (
     <SimpleGrid columns={1} spacing={20}>
       <Container>
         <Grid templateColumns="repeat(5, 1fr)" gap={2} paddingTop={3}>
           <GridItem colSpan={5}>
-            <Box
-              height={250}
-              position={"relative"}
-              className="animate__animated animate__fadeInDown"
-              marginY={20}
-            >
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                layout="fill"
-                objectFit="contain"
-              />
-            </Box>
+            <Logo />
           </GridItem>
           <GridItem colSpan={5}>
-            <Center>
-              <Flex
-                gap={5}
-                marginTop={8}
-                fontSize={"xl"}
-                fontWeight={"light"}
-                className="animate__animated animate__backInDown"
-              >
-                <Box>
-                  <Link href={"/"}>Home</Link>
-                </Box>
-                <Box>
-                  <Link
-                    href={{
-                      hash: "#services",
-                    }}
-                  >
-                    Services
-                  </Link>
-                </Box>
-                <Box>
-                  <Link
-                    href={{
-                      hash: "#gallery",
-                    }}
-                  >
-                    Gallery
-                  </Link>
-                </Box>
-                <Box>
-                  <Link
-                    href={{
-                      hash: "#about",
-                    }}
-                  >
-                    About
-                  </Link>
-                </Box>
-                <Box>
-                  <Link
-                    href={{
-                      hash: "#contact",
-                    }}
-                  >
-                    Contact
-                  </Link>
-                </Box>
-              </Flex>
-            </Center>
+            <AppMenu />
           </GridItem>
           <GridItem colSpan={5}>
             <Services />

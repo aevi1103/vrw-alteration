@@ -3,13 +3,9 @@ import services from "@/data/services.json";
 import groupby from "lodash.groupby";
 import {
   Table,
-  Thead,
   Tbody,
-  Tfoot,
   Tr,
-  Th,
   Td,
-  TableCaption,
   TableContainer,
   SimpleGrid,
   Heading,
@@ -17,8 +13,6 @@ import {
 
 export const Services = () => {
   const groupedServices = React.useMemo(() => groupby(services, "name"), []);
-
-  console.log("groupedServices", groupedServices);
 
   return (
     <SimpleGrid columns={1} spacing={10} marginTop={10}>
@@ -30,8 +24,8 @@ export const Services = () => {
           <Table variant="simple">
             <Tbody>
               {services.map((service) => (
-                <Tr key={service.description} fontSize={"xl"}>
-                  <Td borderColor={"none"} fontWeight={"light"}>
+                <Tr key={service.description}>
+                  <Td borderColor={"none"} fontWeight={"medium"}>
                     {service.description}
                   </Td>
                   <Td borderColor={"none"} isNumeric>
