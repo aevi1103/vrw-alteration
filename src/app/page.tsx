@@ -1,30 +1,19 @@
 "use client";
 
-import {
-  Grid,
-  GridItem,
-  Container,
-  Box,
-  Flex,
-  Spacer,
-  Center,
-  SimpleGrid,
-} from "@chakra-ui/react";
+import { Grid, GridItem, Container, SimpleGrid } from "@chakra-ui/react";
 import { AppMenu, Services, Gallery, About, Logo } from "@/components";
-import Image from "next/image";
-import Link from "next/link";
-import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
-import { useState } from "react";
+// import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
+// import { useState } from "react";
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(window.scrollY);
-  const onWindowScroll = useWindowScroll();
+  // const [scrollY, setScrollY] = useState(window.scrollY);
+  // const onWindowScroll = useWindowScroll();
 
-  onWindowScroll((event) => {
-    setScrollY(window.scrollY);
-  });
+  // onWindowScroll((event) => {
+  //   setScrollY(window.scrollY);
+  // });
 
-  console.log(scrollY);
+  // console.log(scrollY);
 
   return (
     <SimpleGrid columns={1} spacing={20}>
