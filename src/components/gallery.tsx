@@ -24,7 +24,7 @@ export const Gallery = () => {
   }, []);
 
   return (
-    <Container id="gallery">
+    <Container id="gallery" marginTop={20}>
       <ReactGallery images={images} />
     </Container>
   );

@@ -27,11 +27,16 @@ const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
   </GridItem>
 );
 
-export function AppMenu() {
+export function AppMenu({ isVertical }: { isVertical?: boolean }) {
   const { user, signIn, auth } = useAuth();
 
   return (
-    <Grid gridTemplateColumns={"repeat(6, minmax(0, 1fr))"} marginBottom={5}>
+    <Grid
+      gridTemplateColumns={isVertical ? "1fr" : "repeat(6, minmax(0, 1fr))"}
+      marginBottom={3}
+      gap={isVertical ? 5 : 0}
+      marginTop={isVertical ? 10 : 0}
+    >
       <LinkWrapper>
         <Link href={"/"}>Home</Link>
       </LinkWrapper>
