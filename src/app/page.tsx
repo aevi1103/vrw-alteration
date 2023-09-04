@@ -15,6 +15,7 @@ import {
   DrawerHeader,
   DrawerBody,
   useDisclosure,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { AppMenu, Services, Gallery, About, Logo } from "@/components";
 import { useEffect, useState } from "react";
@@ -26,7 +27,7 @@ import React from "react";
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const onWindowScroll = useWindowScroll();
-
+  const [isLarger768] = useMediaQuery("(min-width: 768px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export default function Home() {
             ) : (
               <>
                 <Logo />
-                <AppMenu />
+                {isLarger768 && <AppMenu />}
               </>
             )}
           </Container>
