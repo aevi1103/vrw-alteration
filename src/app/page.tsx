@@ -17,7 +17,14 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-import { AppMenu, Services, Gallery, About, Logo } from "@/components";
+import {
+  AppMenu,
+  Services,
+  Gallery,
+  About,
+  Logo,
+  ContactForm,
+} from "@/components";
 import { useEffect, useState } from "react";
 import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
 import { HamburgerIcon } from "@chakra-ui/icons";
@@ -99,6 +106,12 @@ export default function Home() {
         <GridItem colSpan={4}>
           <Container>
             <About />
+          </Container>
+        </GridItem>
+
+        <GridItem colSpan={4}>
+          <Container>
+            <ContactForm />
           </Container>
         </GridItem>
       </Grid>
