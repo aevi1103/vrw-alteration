@@ -27,7 +27,7 @@ import React from "react";
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const onWindowScroll = useWindowScroll();
-  const [isLarger768] = useMediaQuery("(min-width: 768px)");
+  const [isLarge] = useMediaQuery("(min-width: 768px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function Home() {
             ) : (
               <>
                 <Logo />
-                {isLarger768 && <AppMenu />}
+                {isLarge && <AppMenu />}
               </>
             )}
           </Container>

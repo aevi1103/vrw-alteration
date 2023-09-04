@@ -9,13 +9,15 @@ import {
   TableContainer,
   SimpleGrid,
   Heading,
+  useMediaQuery,
 } from "@chakra-ui/react";
 
 export const Services = () => {
   const groupedServices = React.useMemo(() => groupby(services, "name"), []);
+  const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   return (
-    <SimpleGrid columns={1} spacing={10} marginTop={10}>
+    <SimpleGrid columns={1} spacing={10} marginTop={isLarge ? 10 : 0}>
       {Object.entries(groupedServices).map(([category, services]) => (
         <TableContainer key={category}>
           <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
