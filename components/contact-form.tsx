@@ -8,10 +8,7 @@ import {
   Textarea,
   Button,
   Heading,
-  VStack,
   SimpleGrid,
-  Grid,
-  GridItem,
   Stack,
 } from "@chakra-ui/react";
 
@@ -38,7 +35,7 @@ export function ContactForm() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission here (e.g., send data to server)
     console.log(formData);

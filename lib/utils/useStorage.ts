@@ -23,7 +23,6 @@ export const useStorage = () => {
           try {
             const url = await getDownloadURL(itemRef);
             imgs.push(url);
-            console.log("url", url);
           } catch (error) {
             console.error("Error getting download URL:", error);
           }
@@ -31,14 +30,13 @@ export const useStorage = () => {
 
         const resImgs = imgs.map((img: string, i: number) => ({
           src: img,
-          // width: img.width,
-          // height: img.height,
+          // width: 0,
+          // height: 0,
+          isSelected: false,
           caption: `image ${i}`,
         }));
 
         setImages(resImgs);
-
-        console.log("imgs", imgs);
       } catch (error) {
         console.error("Error listing items:", error);
       }

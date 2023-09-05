@@ -1,7 +1,6 @@
-"use client";
-import { Flex, Box, Center, Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem } from "@chakra-ui/react";
 import Link from "next/link";
-import { useAuth } from "@/utils/useAuth";
+import { useAuth } from "@/lib/utils/useAuth";
 
 const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
   <GridItem

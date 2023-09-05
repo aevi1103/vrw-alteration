@@ -1,13 +1,9 @@
-"use client";
-
 import {
   Grid,
   GridItem,
   Container,
-  SimpleGrid,
   Flex,
   Spacer,
-  Text,
   Drawer,
   DrawerOverlay,
   DrawerContent,
