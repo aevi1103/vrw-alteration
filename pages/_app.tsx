@@ -2,15 +2,11 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import Head from "next/head";
 import { theme } from "../lib/utils/theme";
-import { useFirebase } from "../lib/utils/useFirebase";
 import "@/styles/globals.css";
+import { FirebaseProvider } from "@/contexts/FirebaseContext";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { app, analytics } = useFirebase();
-  console.log("app", {
-    app,
-    analytics,
-  });
+  console.log({ pageProps });
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -19,7 +15,22 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* <link rel="icon" href="/logo-sm.png" /> */}
       </Head>
-      <Component {...pageProps} />
+      <FirebaseProvider>
+        <Component {...pageProps} />
+      </FirebaseProvider>
     </ChakraProvider>
   );
 }
+
+// export async function getServerSideProps() {
+//   const firebaseConfig = {
+//     apiKey: process.env.FIREBASE_API_KEY,
+//     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+//   };
+
+//   return {
+//     props: {
+//       firebaseConfig,
+//     },
+//   };
+// }

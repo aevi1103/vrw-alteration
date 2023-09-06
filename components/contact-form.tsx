@@ -10,20 +10,20 @@ import {
   Heading,
   SimpleGrid,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
+import { IContactFormData } from "@/lib/types/contact-form";
 
-interface FormData {
-  name: string;
-  email: string;
-  message: string;
-}
+const initialState: IContactFormData = {
+  name: "",
+  email: "",
+  message: "",
+};
 
 export function ContactForm() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<IContactFormData>(initialState);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,7 +38,35 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission here (e.g., send data to server)
-    console.log(formData);
+    setIsSubmitting(true);
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      // Request was successful
+      const data = await response.json();
+
+      toast({
+        title: "Contact form submitted.",
+        description: "We've send your message to our team.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+
+      setIsSubmitting(false);
+      setFormData(initialState);
+
+      console.log("Server response:", data);
+    } else {
+      // Handle error
+      console.error("Error:", response.statusText);
+    }
   };
 
   return (
@@ -112,7 +140,11 @@ export function ContactForm() {
             required
           />
         </FormControl>
-        <Button type="submit" bgColor={"brand.primary"}>
+        <Button
+          type="submit"
+          bgColor={"brand.primary"}
+          isLoading={isSubmitting}
+        >
           Submit
         </Button>
       </form>

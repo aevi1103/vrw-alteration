@@ -26,6 +26,7 @@ import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import React from "react";
+import { useFirebase } from "@/contexts/FirebaseContext";
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);

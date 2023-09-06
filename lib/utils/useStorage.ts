@@ -1,5 +1,5 @@
+import { useFirebase } from "@/contexts/FirebaseContext";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
-import { useFirebase } from "./useFirebase";
 import { useEffect, useState } from "react";
 
 export const useStorage = () => {
