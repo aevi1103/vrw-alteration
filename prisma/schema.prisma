@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model price_categories {
+  id         BigInt   @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  category   String   @db.VarChar
+  prices     prices[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model prices {
+  id               BigInt           @id @default(autoincrement())
+  created_at       DateTime         @default(now()) @db.Timestamptz(6)
+  category_id      BigInt
+  service          String           @db.VarChar
+  outside_garment  Boolean          @default(false)
+  price            Float            @db.Real
+  price_categories price_categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
