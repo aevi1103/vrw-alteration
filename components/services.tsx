@@ -1,6 +1,4 @@
 import React from "react";
-import services from "@/data/services.json";
-import groupby from "lodash.groupby";
 import {
   Table,
   Tbody,
@@ -16,7 +14,6 @@ import { PricesResult } from "@/pages";
 export const Services = ({ prices }: { prices: PricesResult }) => {
   console.log({ prices });
 
-  const groupedServices = React.useMemo(() => groupby(services, "name"), []);
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   return (
