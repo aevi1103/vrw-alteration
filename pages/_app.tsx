@@ -4,9 +4,9 @@ import Head from "next/head";
 import { theme } from "../lib/utils/theme";
 import "@/styles/globals.css";
 import { FirebaseProvider } from "@/contexts/FirebaseContext";
+import "animate.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  console.log({ pageProps });
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -21,16 +21,3 @@ export default function App({ Component, pageProps }: AppProps) {
     </ChakraProvider>
   );
 }
-
-// export async function getServerSideProps() {
-//   const firebaseConfig = {
-//     apiKey: process.env.FIREBASE_API_KEY,
-//     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-//   };
-
-//   return {
-//     props: {
-//       firebaseConfig,
-//     },
-//   };
-// }

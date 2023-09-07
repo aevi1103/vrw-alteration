@@ -11,27 +11,30 @@ import {
   Heading,
   useMediaQuery,
 } from "@chakra-ui/react";
+import { PricesResult } from "@/pages";
 
-export const Services = () => {
+export const Services = ({ prices }: { prices: PricesResult }) => {
+  console.log({ prices });
+
   const groupedServices = React.useMemo(() => groupby(services, "name"), []);
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   return (
     <SimpleGrid columns={1} spacing={10} marginTop={isLarge ? 10 : 0}>
-      {Object.entries(groupedServices).map(([category, services]) => (
-        <TableContainer key={category}>
+      {prices.map((service) => (
+        <TableContainer key={service.category}>
           <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
-            {category}
+            {service.category}
           </Heading>
           <Table variant="simple">
             <Tbody>
-              {services.map((service) => (
-                <Tr key={service.description}>
+              {service.prices.map((p) => (
+                <Tr key={p.service}>
                   <Td borderColor={"none"} fontWeight={"medium"}>
-                    {service.description}
+                    {p.service}
                   </Td>
                   <Td borderColor={"none"} isNumeric>
-                    {service.price}
+                    ${p.price}
                   </Td>
                 </Tr>
               ))}

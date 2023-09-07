@@ -26,9 +26,11 @@ import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import React from "react";
-import { useFirebase } from "@/contexts/FirebaseContext";
+import { prisma } from "@/prisma/client";
+import { Prisma } from "@prisma/client";
+import { getPrices } from "@/lib/data/services";
 
-export default function Home() {
+export default function Home({ prices }: { prices: PricesResult }) {
   const [scrollY, setScrollY] = useState(0);
   const onWindowScroll = useWindowScroll();
   const [isLarge] = useMediaQuery("(min-width: 768px)");
@@ -92,7 +94,7 @@ export default function Home() {
 
         <GridItem colSpan={4}>
           <Container>
-            <Services />
+            <Services prices={prices} />
           </Container>
         </GridItem>
 
@@ -125,3 +127,15 @@ export default function Home() {
     </>
   );
 }
+
+export async function getServerSideProps() {
+  const prices = await getPrices();
+
+  return {
+    props: {
+      prices,
+    },
+  };
+}
+
+export type PricesResult = Prisma.PromiseReturnType<typeof getPrices>;
