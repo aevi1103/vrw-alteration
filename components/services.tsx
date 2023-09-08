@@ -25,10 +25,15 @@ export const Services = ({ prices }: { prices: PricesResult }) => {
             <Tbody>
               {service.prices.map((p) => (
                 <Tr key={p.service}>
-                  <Td borderColor={"none"} fontWeight={"medium"}>
+                  <Td borderColor={"none"} border={0} fontWeight={"medium"}>
                     {p.service}
                   </Td>
-                  <Td borderColor={"none"} isNumeric>
+                  <Td
+                    borderColor={"none"}
+                    border={0}
+                    isNumeric
+                    fontWeight={"semibold"}
+                  >
                     ${p.price}
                   </Td>
                 </Tr>

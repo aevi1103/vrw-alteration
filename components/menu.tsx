@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/utils/useAuth";
 const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
   <GridItem
     placeSelf={"center"}
-    fontWeight="normal"
+    fontWeight="semibold"
     position={"relative"}
     _hover={{
       // fontWeight: "semibold",
