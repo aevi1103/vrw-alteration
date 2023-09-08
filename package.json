@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev",
-    "build": "prisma generate && prisma db push && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "npx prisma generate"
@@ -42,6 +42,7 @@
   "devDependencies": {
     "@types/lodash.groupby": "^4.6.7",
     "@types/nodemailer": "^6.4.9",
-    "prisma": "^5.2.0"
+    "prisma": "^5.2.0",
+    "supabase": "^1.93.0"
   }
 }
