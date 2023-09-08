@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>{pageProps?.title || "VRW Alteration"}</title>
         <meta name="description" content="VRW" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* <link rel="icon" href="/logo-sm.png" /> */}
+        <link rel="icon" href="/icon.png" />
       </Head>
       <FirebaseProvider>
         <Component {...pageProps} />
