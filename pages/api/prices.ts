@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getPrices } from "@/lib/data/services";
+import prisma from "@/lib/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const prices = await getPrices();
+      const prices = await prisma.prices.findMany({});
       // Return a success response
       res.status(200).json(prices);
     } catch (error) {

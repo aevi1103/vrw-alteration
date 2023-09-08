@@ -11,16 +11,3 @@ export const Layout = ({
 
   return <div>{children}</div>;
 };
-
-export async function getServerSideProps() {
-  const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  };
-
-  return {
-    props: {
-      firebaseConfig,
-    },
-  };
-}
