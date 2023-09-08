@@ -12,8 +12,6 @@ import {
 import { PricesResult } from "@/pages";
 
 export const Services = ({ prices }: { prices: PricesResult }) => {
-  console.log({ prices });
-
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   return (
@@ -23,7 +21,7 @@ export const Services = ({ prices }: { prices: PricesResult }) => {
           <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
             {service.category}
           </Heading>
-          <Table variant="simple">
+          <Table variant="simple" size={isLarge ? "md" : "sm"}>
             <Tbody>
               {service.prices.map((p) => (
                 <Tr key={p.service}>

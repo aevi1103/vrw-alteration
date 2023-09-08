@@ -29,15 +29,7 @@ import React from "react";
 import { Prisma } from "@prisma/client";
 import { getPrices } from "@/lib/data/services";
 
-export default function Home({
-  prices,
-  error,
-}: {
-  prices: PricesResult;
-  error: any;
-}) {
-  console.log({ prices, error });
-
+export default function Home({ prices }: { prices: PricesResult }) {
   const [scrollY, setScrollY] = useState(0);
   const onWindowScroll = useWindowScroll();
   const [isLarge] = useMediaQuery("(min-width: 768px)");
