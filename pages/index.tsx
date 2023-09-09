@@ -98,7 +98,11 @@ export default function Home({ prices }: { prices: any }) {
         </GridItem>
 
         <GridItem colSpan={4}>
-          <Gallery />
+          <Container>
+            <Gallery path="machines" title="Machine" />
+            <Gallery path="alterations" title="Alterations" />
+            <Gallery path="workspace" title="Workspace" />
+          </Container>
         </GridItem>
 
         <GridItem colSpan={4}>

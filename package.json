@@ -36,7 +36,7 @@
     "react-dom": "^18.2.0",
     "react-grid-gallery": "^1.0.0",
     "react-icons": "^4.10.1",
-    "react-photo-album": "^2.3.0",
+    "react-responsive-carousel": "^3.2.23",
     "typescript": "5.0.4"
   },
   "devDependencies": {

@@ -2,19 +2,29 @@ import { useFirebase } from "@/contexts/FirebaseContext";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 import { useEffect, useState } from "react";
 
-export const useStorage = () => {
+export const useStorage = ({ subPath }: { subPath?: string }) => {
   const { app } = useFirebase();
   const [images, setImages] = useState<any>([]);
 
   useEffect(() => {
+    if (images.length > 0) {
+      return;
+    }
+
     const fetchData = async () => {
       if (!app) {
         return;
       }
 
+      //gs://vrw-alteration.appspot.com/alterations
+
       const storage = getStorage(app);
       //todo: move to env
-      const storageRef = ref(storage, "gs://vrw-alteration.appspot.com");
+
+      const path = subPath
+        ? `gs://vrw-alteration.appspot.com/${subPath}`
+        : "gs://vrw-alteration.appspot.com";
+      const storageRef = ref(storage, path);
       try {
         const res = await listAll(storageRef);
         const imgs = [];
@@ -28,13 +38,17 @@ export const useStorage = () => {
           }
         }
 
-        const resImgs = imgs.map((img: string, i: number) => ({
-          src: img,
-          // width: 0,
-          // height: 0,
-          isSelected: false,
-          caption: `image ${i}`,
-        }));
+        const resImgs = imgs.map((img: string, i: number) => {
+          const thumbnail = {
+            src: img,
+            width: 100,
+            height: 100,
+            isSelected: false,
+            caption: `image ${i}`,
+          };
+
+          return thumbnail;
+        });
 
         setImages(resImgs);
       } catch (error) {
@@ -43,7 +57,7 @@ export const useStorage = () => {
     };
 
     fetchData();
-  }, [app]);
+  }, [app, images, subPath]);
 
   return {
     images,
