@@ -9,21 +9,20 @@ import {
   Heading,
   useMediaQuery,
 } from "@chakra-ui/react";
-import { PricesResult } from "@/pages";
 
-export const Services = ({ prices }: { prices: PricesResult }) => {
+export const Services = ({ prices }: { prices: any }) => {
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   return (
     <SimpleGrid columns={1} spacing={10} marginTop={isLarge ? 10 : 0}>
-      {prices.map((service) => (
+      {prices.map((service: any) => (
         <TableContainer key={service.category}>
           <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
             {service.category}
           </Heading>
           <Table variant="simple" size={isLarge ? "md" : "sm"}>
             <Tbody>
-              {service.prices.map((p) => (
+              {service.prices.map((p: any) => (
                 <Tr key={p.service}>
                   <Td borderColor={"none"} border={0} fontWeight={"medium"}>
                     {p.service}

@@ -26,10 +26,10 @@ import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import React from "react";
-import { Prisma } from "@prisma/client";
-import { getPrices } from "@/lib/data/services";
+import supabase from "@/lib/supabase-client";
+import { DbResult } from "@/database.types";
 
-export default function Home({ prices }: { prices: PricesResult }) {
+export default function Home({ prices }: { prices: any }) {
   const [scrollY, setScrollY] = useState(0);
   const onWindowScroll = useWindowScroll();
   const [isLarge] = useMediaQuery("(min-width: 768px)");
@@ -128,22 +128,25 @@ export default function Home({ prices }: { prices: PricesResult }) {
 }
 
 export async function getServerSideProps() {
-  try {
-    const prices = await getPrices();
-    return {
-      props: {
-        prices,
-      },
-    };
-  } catch (error: any) {
-    console.log(error);
+  const query = supabase
+    .from("categories")
+    .select("*, prices(id, price, service))");
+
+  const prices: DbResult<typeof query> = await query;
+
+  if (prices.error) {
+    console.error(prices.error);
     return {
       props: {
         prices: [],
-        error: error.message,
+        error: prices.error,
       },
     };
   }
-}
 
-export type PricesResult = Prisma.PromiseReturnType<typeof getPrices>;
+  return {
+    props: {
+      prices: prices.data,
+    },
+  };
+}
