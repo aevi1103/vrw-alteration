@@ -26,6 +26,8 @@ import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import React from "react";
+import { supabase } from "@/lib/supabase-client";
+import { DbResult } from "@/database.types";
 
 export default function Home({ prices }: { prices: any }) {
   const [scrollY, setScrollY] = useState(0);
@@ -91,7 +93,7 @@ export default function Home({ prices }: { prices: any }) {
 
         <GridItem colSpan={4}>
           <Container>
-            <Services />
+            <Services prices={prices} />
           </Container>
         </GridItem>
 
@@ -123,4 +125,18 @@ export default function Home({ prices }: { prices: any }) {
       </Drawer>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const query = supabase
+    .from("categories")
+    .select("*, prices(id, price, service))");
+
+  const prices: DbResult<typeof query> = await query;
+
+  return {
+    props: {
+      prices: prices.data,
+    },
+  };
 }

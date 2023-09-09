@@ -10,18 +10,18 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 
-export const Services = () => {
-  const [prices, setPrices] = React.useState<any>([]);
+export const Services = ({ prices }: { prices: any }) => {
+  // const [prices, setPrices] = React.useState<any>([]);
 
-  useEffect(() => {
-    const getPrices = async () => {
-      const res = await fetch("/api/prices");
-      const prices = await res.json();
-      setPrices(prices);
-    };
+  // useEffect(() => {
+  //   const getPrices = async () => {
+  //     const res = await fetch("/api/prices");
+  //     const prices = await res.json();
+  //     setPrices(prices);
+  //   };
 
-    getPrices();
-  }, []);
+  //   getPrices();
+  // }, []);
 
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
