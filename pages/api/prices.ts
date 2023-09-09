@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "@/lib/client";
+import supabase from "@/lib/supabase-client";
+import { DbResult } from "@/database.types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,8 +8,12 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const prices = await prisma.prices.findMany({});
-      // Return a success response
+      const query = supabase
+        .from("categories")
+        .select("*, prices(id, price, service))");
+
+      const prices: DbResult<typeof query> = await query;
+
       res.status(200).json(prices);
     } catch (error) {
       console.error(error);
