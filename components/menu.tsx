@@ -26,8 +26,20 @@ const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
   </GridItem>
 );
 
-export function AppMenu({ isVertical }: { isVertical?: boolean }) {
+export function AppMenu({
+  isVertical,
+  onClose,
+}: {
+  isVertical?: boolean;
+  onClose?: () => void;
+}) {
   const { user, signIn, auth } = useAuth();
+
+  const onClick = () => {
+    if (onClose && isVertical) {
+      onClose();
+    }
+  };
 
   return (
     <Grid
@@ -37,7 +49,9 @@ export function AppMenu({ isVertical }: { isVertical?: boolean }) {
       marginTop={isVertical ? 10 : 0}
     >
       <LinkWrapper>
-        <Link href={"/"}>Home</Link>
+        <Link href={"/"} onClick={onClick}>
+          Home
+        </Link>
       </LinkWrapper>
 
       <LinkWrapper>
@@ -45,6 +59,7 @@ export function AppMenu({ isVertical }: { isVertical?: boolean }) {
           href={{
             hash: "#services",
           }}
+          onClick={onClick}
         >
           Services
         </Link>
@@ -54,6 +69,7 @@ export function AppMenu({ isVertical }: { isVertical?: boolean }) {
           href={{
             hash: "#gallery",
           }}
+          onClick={onClick}
         >
           Gallery
         </Link>
@@ -63,6 +79,7 @@ export function AppMenu({ isVertical }: { isVertical?: boolean }) {
           href={{
             hash: "#about",
           }}
+          onClick={onClick}
         >
           About
         </Link>
@@ -72,6 +89,7 @@ export function AppMenu({ isVertical }: { isVertical?: boolean }) {
           href={{
             hash: "#contact",
           }}
+          onClick={onClick}
         >
           Contact
         </Link>

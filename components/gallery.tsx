@@ -18,7 +18,7 @@ export const Gallery = ({ tag, title }: { tag: string; title: string }) => {
   }
 
   return (
-    <Box id="gallery" margin={2} borderRadius={5} marginY={10}>
+    <Box margin={2} borderRadius={5} marginY={10}>
       <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
         {title}
       </Heading>
@@ -26,7 +26,7 @@ export const Gallery = ({ tag, title }: { tag: string; title: string }) => {
       <ReactGallery
         images={images}
         enableImageSelection={false}
-        margin={5}
+        margin={2}
         rowHeight={233}
 
         // thumbnailStyle={{

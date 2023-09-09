@@ -28,6 +28,7 @@ import Image from "next/image";
 import React from "react";
 import { supabase } from "@/lib/supabase-client";
 import { DbResult } from "@/database.types";
+import { AnimatedComponent } from "@/components/animated-component";
 
 export default function Home({ prices }: { prices: any }) {
   const [scrollY, setScrollY] = useState(0);
@@ -91,27 +92,31 @@ export default function Home({ prices }: { prices: any }) {
           </Container>
         </GridItem>
 
-        <GridItem colSpan={4}>
+        <GridItem colSpan={4} id="services">
           <Container>
-            <Services prices={prices} />
+            <AnimatedComponent animatedName="fadeInLeft">
+              <Services prices={prices} />
+            </AnimatedComponent>
           </Container>
         </GridItem>
 
-        <GridItem colSpan={4}>
-          <Container>
-            <Gallery tag="machine" title="Machine" />
-            <Gallery tag="alterations" title="Alterations" />
-            <Gallery tag="workspace" title="Workspace" />
-          </Container>
+        <GridItem colSpan={4} id="gallery">
+          <AnimatedComponent animatedName="fadeInRight">
+            <Container>
+              <Gallery tag="machine" title="Machine" />
+              <Gallery tag="alterations" title="Alterations" />
+              <Gallery tag="workspace" title="Workspace" />
+            </Container>
+          </AnimatedComponent>
         </GridItem>
 
-        <GridItem colSpan={4}>
+        <GridItem colSpan={4} id="about">
           <Container>
             <About />
           </Container>
         </GridItem>
 
-        <GridItem colSpan={4}>
+        <GridItem colSpan={4} id="contact">
           <Container>
             <ContactForm />
           </Container>
@@ -123,7 +128,7 @@ export default function Home({ prices }: { prices: any }) {
           <DrawerCloseButton />
           <DrawerHeader />
           <DrawerBody>
-            <AppMenu isVertical />
+            <AppMenu isVertical onClose={onClose} />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

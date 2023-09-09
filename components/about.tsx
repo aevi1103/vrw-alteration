@@ -24,7 +24,7 @@ const aboutData = {
 
 export const About = () => {
   return (
-    <Box p={4} id="about">
+    <Box p={4}>
       <Heading as="h1" mb={4}>
         {aboutData.title}
       </Heading>

@@ -73,7 +73,6 @@ export function ContactForm() {
     <Box
       maxW="md"
       mx="auto"
-      id="contact"
       backgroundColor={"white"}
       shadow={"lg"}
       padding={10}
