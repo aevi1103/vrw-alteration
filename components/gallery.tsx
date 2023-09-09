@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Heading } from "@chakra-ui/react";
-import {
-  Gallery as ReactGallery,
-  ThumbnailImageProps,
-} from "react-grid-gallery";
-import { useStorage } from "@/lib/utils/useStorage";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Gallery as ReactGallery } from "react-grid-gallery";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils/fetcher";
 
-export const Gallery = ({ path, title }: { path: string; title: string }) => {
-  const { images } = useStorage({
-    subPath: path,
-  });
+export const Gallery = ({ tag, title }: { tag: string; title: string }) => {
+  const {
+    data: images,
+    error,
+    isLoading,
+  } = useSWR(`/api/images/${tag}`, fetcher);
 
-  if (images.length === 0) {
-    return null;
+  if (error) return <div>failed to load</div>;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (

@@ -99,9 +99,9 @@ export default function Home({ prices }: { prices: any }) {
 
         <GridItem colSpan={4}>
           <Container>
-            <Gallery path="machines" title="Machine" />
-            <Gallery path="alterations" title="Alterations" />
-            <Gallery path="workspace" title="Workspace" />
+            <Gallery tag="machine" title="Machine" />
+            <Gallery tag="alterations" title="Alterations" />
+            <Gallery tag="workspace" title="Workspace" />
           </Container>
         </GridItem>
 
@@ -132,15 +132,19 @@ export default function Home({ prices }: { prices: any }) {
 }
 
 export async function getServerSideProps() {
+  const prices = await getPrices();
+  return {
+    props: {
+      prices: prices,
+    },
+  };
+}
+
+async function getPrices() {
   const query = supabase
     .from("categories")
     .select("*, prices(id, price, service))");
 
   const prices: DbResult<typeof query> = await query;
-
-  return {
-    props: {
-      prices: prices.data,
-    },
-  };
+  return prices.data;
 }

@@ -28,7 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/middleware.js"
+    "src/app/middleware.js",
+    "lib/utils/fetcher.js"
   ],
   "exclude": ["node_modules"]
 }
