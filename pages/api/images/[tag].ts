@@ -26,16 +26,18 @@ export default async function handler(
       const response = await fetch(url, requestOptions);
       const data = await response.json();
 
-      const resources = data.resources.map(
-        (img: any, i: number) => ({
-          src: img.url,
-          width: img.width,
-          height: img.height,
-          isSelected: false,
-          caption: `image ${i}`,
-        }),
-        []
-      );
+      const resources = data.resources
+        .map(
+          (img: any, i: number) => ({
+            src: img.url,
+            width: img.width,
+            height: img.height,
+            isSelected: false,
+            caption: `image ${i}`,
+          }),
+          []
+        )
+        .sort((a: any, b: any) => a.height - b.height);
 
       res.status(200).json(resources);
     } catch (error: any) {
