@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   Tbody,
@@ -10,7 +10,19 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 
-export const Services = ({ prices }: { prices: any }) => {
+export const Services = () => {
+  const [prices, setPrices] = React.useState<any>([]);
+
+  useEffect(() => {
+    const getPrices = async () => {
+      const res = await fetch("/api/prices");
+      const prices = await res.json();
+      setPrices(prices);
+    };
+
+    getPrices();
+  }, []);
+
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   return (
