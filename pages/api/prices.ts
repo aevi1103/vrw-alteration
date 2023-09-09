@@ -14,7 +14,7 @@ export default async function handler(
 
       const prices: DbResult<typeof query> = await query;
 
-      res.status(200).json(prices);
+      res.status(200).json(prices.data);
     } catch (error) {
       console.error(error);
       res.status(500).json(error);
