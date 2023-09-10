@@ -22,12 +22,21 @@ export const Services = ({ prices }: { prices: any }) => {
           </Heading>
           <Table variant="simple" size={isLarge ? "md" : "sm"} marginBottom={2}>
             <Tbody>
-              {service.prices.map((p: any) => (
+              {service.prices.map((p: any, index: number) => (
                 <Tr key={p.service}>
-                  <Td borderColor={"none"} fontWeight={"medium"}>
+                  <Td
+                    borderColor={"none"}
+                    border={index === service.prices.length - 1 ? 0 : undefined}
+                    fontWeight={"medium"}
+                  >
                     {p.service}
                   </Td>
-                  <Td borderColor={"none"} isNumeric fontWeight={"semibold"}>
+                  <Td
+                    borderColor={"none"}
+                    border={index === service.prices.length - 1 ? 0 : undefined}
+                    isNumeric
+                    fontWeight={"semibold"}
+                  >
                     ${p.price}
                   </Td>
                 </Tr>
