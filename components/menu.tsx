@@ -1,4 +1,4 @@
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useAuth } from "@/lib/utils/useAuth";
 
@@ -7,6 +7,7 @@ const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
     placeSelf={"center"}
     fontWeight="semibold"
     position={"relative"}
+    cursor={"pointer"}
     _hover={{
       // fontWeight: "semibold",
       transform: "scale(1.1)",
@@ -35,7 +36,19 @@ export function AppMenu({
 }) {
   const { user, signIn, auth } = useAuth();
 
-  const onClick = () => {
+  const scrollToSection = (targetId: string) => {
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+      const offset = 200; // Adjust this to match your header's height
+      window.scrollTo({
+        top: targetElement.offsetTop - offset,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (onClose && isVertical) {
       onClose();
     }
@@ -55,44 +68,16 @@ export function AppMenu({
       </LinkWrapper>
 
       <LinkWrapper>
-        <Link
-          href={{
-            hash: "#services",
-          }}
-          onClick={onClick}
-        >
-          Services
-        </Link>
+        <Text onClick={() => scrollToSection("services")}>Services</Text>
       </LinkWrapper>
       <LinkWrapper>
-        <Link
-          href={{
-            hash: "#gallery",
-          }}
-          onClick={onClick}
-        >
-          Gallery
-        </Link>
+        <Text onClick={() => scrollToSection("gallery")}>Gallery</Text>
       </LinkWrapper>
       <LinkWrapper>
-        <Link
-          href={{
-            hash: "#about",
-          }}
-          onClick={onClick}
-        >
-          About
-        </Link>
+        <Text onClick={() => scrollToSection("about")}>About</Text>
       </LinkWrapper>
       <LinkWrapper>
-        <Link
-          href={{
-            hash: "#contact",
-          }}
-          onClick={onClick}
-        >
-          Contact
-        </Link>
+        <Text onClick={() => scrollToSection("contact")}>Contact</Text>
       </LinkWrapper>
       {user !== undefined && (
         <LinkWrapper>

@@ -21,7 +21,7 @@ import {
   Logo,
   ContactForm,
 } from "@/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Image from "next/image";
@@ -29,21 +29,20 @@ import React from "react";
 import { supabase } from "@/lib/supabase-client";
 import { DbResult } from "@/database.types";
 import { AnimatedComponent } from "@/components/animated-component";
+import { AboutRecord } from "@/lib/types/about";
 
-export default function Home({ prices }: { prices: any }) {
+export default function Home({
+  prices,
+  about,
+}: {
+  prices: any;
+  about: AboutRecord[];
+}) {
   const [scrollY, setScrollY] = useState(0);
   const onWindowScroll = useWindowScroll();
+
   const [isLarge] = useMediaQuery("(min-width: 768px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const scroll = localStorage.getItem("scrollY");
-      if (scroll) {
-        setScrollY(parseInt(scroll));
-      }
-    }
-  }, []);
 
   onWindowScroll((event) => {
     if (typeof window !== "undefined") {
@@ -71,7 +70,9 @@ export default function Home({ prices }: { prices: any }) {
                 <Image
                   src="/logo.png"
                   alt="Logo"
-                  objectFit="contain"
+                  style={{
+                    objectFit: "contain",
+                  }}
                   height={200}
                   width={200}
                 />
@@ -112,7 +113,7 @@ export default function Home({ prices }: { prices: any }) {
 
         <GridItem colSpan={4} id="about">
           <Container>
-            <About />
+            <About data={about} />
           </Container>
         </GridItem>
 
@@ -138,9 +139,11 @@ export default function Home({ prices }: { prices: any }) {
 
 export async function getServerSideProps() {
   const prices = await getPrices();
+  const about = await getAbout();
   return {
     props: {
-      prices: prices,
+      prices,
+      about,
     },
   };
 }
@@ -152,4 +155,10 @@ async function getPrices() {
 
   const prices: DbResult<typeof query> = await query;
   return prices.data;
+}
+
+async function getAbout() {
+  const query = supabase.from("about").select("*");
+  const about: DbResult<typeof query> = await query;
+  return about.data;
 }

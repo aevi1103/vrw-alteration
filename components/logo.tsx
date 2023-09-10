@@ -15,6 +15,7 @@ export const Logo = ({ height = 20 }: { height?: number }) => {
         src="/logo.png"
         alt="Logo"
         fill
+        priority
         style={{
           objectFit: "contain",
         }}

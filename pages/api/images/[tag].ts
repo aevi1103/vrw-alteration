@@ -27,16 +27,15 @@ export default async function handler(
       const data = await response.json();
 
       const resources = data.resources
-        .map(
-          (img: any, i: number) => ({
-            src: img.url,
-            width: img.width,
-            height: img.height,
-            isSelected: false,
-            caption: `image ${i}`,
-          }),
-          []
-        )
+        .map((img: any, i: number) => {
+          const { url, width, height } = img;
+
+          return {
+            src: url,
+            width: width,
+            height: height,
+          };
+        }, [])
         .sort((a: any, b: any) => a.height - b.height);
 
       res.status(200).json(resources);

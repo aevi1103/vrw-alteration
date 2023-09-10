@@ -44,6 +44,24 @@ export interface Database {
         };
         Relationships: [];
       };
+      about: {
+        Row: {
+          created_at: string;
+          data: Json;
+          id: number;
+        };
+        Insert: {
+          created_at?: string;
+          data: Json;
+          id?: number;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json;
+          id?: number;
+        };
+        Relationships: [];
+      };
       categories: {
         Row: {
           category: string | null;

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Table,
   Tbody,
@@ -24,15 +24,10 @@ export const Services = ({ prices }: { prices: any }) => {
             <Tbody>
               {service.prices.map((p: any) => (
                 <Tr key={p.service}>
-                  <Td borderColor={"none"} border={0} fontWeight={"medium"}>
+                  <Td borderColor={"none"} fontWeight={"medium"}>
                     {p.service}
                   </Td>
-                  <Td
-                    borderColor={"none"}
-                    border={0}
-                    isNumeric
-                    fontWeight={"semibold"}
-                  >
+                  <Td borderColor={"none"} isNumeric fontWeight={"semibold"}>
                     ${p.price}
                   </Td>
                 </Tr>
