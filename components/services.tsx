@@ -13,6 +13,11 @@ import {
 export const Services = ({ prices }: { prices: any }) => {
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
+  const tableCellStyle = {
+    whiteSpace: isLarge ? "nowrap" : "normal", // Use nowrap for larger screens and normal for smaller screens
+    wordWrap: "break-word", // Allow word wrap within cells
+  };
+
   return (
     <SimpleGrid columns={1} spacing={10} marginTop={isLarge ? 10 : 0}>
       {prices.map((service: any) => (
@@ -20,7 +25,14 @@ export const Services = ({ prices }: { prices: any }) => {
           <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
             {service.category}
           </Heading>
-          <Table variant="simple" size={isLarge ? "md" : "sm"} marginBottom={2}>
+          <Table
+            variant="simple"
+            size={isLarge ? "md" : "sm"}
+            marginBottom={2}
+            sx={{
+              tableLayout: "fixed",
+            }}
+          >
             <Tbody>
               {service.prices.map((p: any, index: number) => (
                 <Tr key={p.service}>
@@ -28,6 +40,7 @@ export const Services = ({ prices }: { prices: any }) => {
                     borderColor={"none"}
                     border={index === service.prices.length - 1 ? 0 : undefined}
                     fontWeight={"medium"}
+                    sx={tableCellStyle}
                   >
                     {p.service}
                   </Td>
