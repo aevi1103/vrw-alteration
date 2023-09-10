@@ -20,7 +20,7 @@ export const Services = ({ prices }: { prices: any }) => {
           <Heading size={"md"} marginBottom={5} fontWeight={"semibold"}>
             {service.category}
           </Heading>
-          <Table variant="simple" size={isLarge ? "md" : "sm"}>
+          <Table variant="simple" size={isLarge ? "md" : "sm"} marginBottom={2}>
             <Tbody>
               {service.prices.map((p: any) => (
                 <Tr key={p.service}>
