@@ -1,16 +1,17 @@
 import { Grid, GridItem, Text } from "@chakra-ui/react";
 import Link from "next/link";
-import { useAuth } from "@/lib/utils/useAuth";
+// import { useAuth } from "@/lib/utils/useAuth";
 
 const LinkWrapper = ({ children }: { children: React.ReactNode }) => (
   <GridItem
     placeSelf={"center"}
-    fontWeight="semibold"
+    fontWeight="normal"
     position={"relative"}
     cursor={"pointer"}
     _hover={{
       // fontWeight: "semibold",
-      transform: "scale(1.1)",
+      transform: "translateY(-5px)",
+      // color: "yellow.800",
       "::after": {
         content: "''",
         position: "absolute",
@@ -34,7 +35,7 @@ export function AppMenu({
   isVertical?: boolean;
   onClose?: () => void;
 }) {
-  const { user, signIn, auth } = useAuth();
+  // const { user, signIn, auth } = useAuth();
 
   const scrollToSection = (targetId: string) => {
     const targetElement = document.getElementById(targetId);
@@ -46,6 +47,10 @@ export function AppMenu({
         behavior: "smooth",
       });
     }
+
+    if (onClose && isVertical) {
+      onClose();
+    }
   };
 
   const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -56,10 +61,10 @@ export function AppMenu({
 
   return (
     <Grid
-      gridTemplateColumns={isVertical ? "1fr" : "repeat(6, minmax(0, 1fr))"}
+      gridTemplateColumns={isVertical ? "1fr" : "repeat(5 , minmax(0, 1fr))"}
       marginBottom={3}
       gap={isVertical ? 5 : 0}
-      marginTop={isVertical ? 10 : 0}
+      marginTop={isVertical ? 20 : 10}
     >
       <LinkWrapper>
         <Link href={"/"} onClick={onClick}>
@@ -79,7 +84,7 @@ export function AppMenu({
       <LinkWrapper>
         <Text onClick={() => scrollToSection("contact")}>Contact</Text>
       </LinkWrapper>
-      {user !== undefined && (
+      {/* {user !== undefined && (
         <LinkWrapper>
           <Link
             href={"/"}
@@ -94,7 +99,7 @@ export function AppMenu({
             {user ? "Logout" : "Login"}
           </Link>
         </LinkWrapper>
-      )}
+      )} */}
     </Grid>
   );
 }
