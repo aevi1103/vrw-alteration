@@ -7,9 +7,20 @@ import "photoswipe/dist/photoswipe.css";
 import Image from "next/image";
 
 export const Gallery = ({ tag, title }: { tag: string; title: string }) => {
-  const { data: images, error } = useSWR(`/api/images/${tag}`, fetcher);
+  const {
+    data: images,
+    error,
+    isLoading,
+  } = useSWR(`/api/images/${tag}`, fetcher);
 
   if (error) return <div>failed to load images</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!images) {
+    return null;
+  }
 
   const imgSize = 160;
   const smallItemStyles: React.CSSProperties = {

@@ -90,7 +90,7 @@ export function ContactForm() {
         <Stack>
           <Heading size={"sm"}>Contact</Heading>
           <Heading size={"xs"} fontWeight={"light"}>
-            <a href="mailto: aebbradgie@gmail.com">aebraddgie@gmail.com</a>
+            <a href="mailto: aebbradgie@gmail.com">vrwalteration@gmail.com</a>
           </Heading>
         </Stack>
 
