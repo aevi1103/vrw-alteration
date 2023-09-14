@@ -54,7 +54,12 @@ export default function Home({
 
   return (
     <>
-      <Grid templateColumns="repeat(4, 1fr)">
+      <Grid
+        templateColumns="repeat(4, 1fr)"
+        className="bg-pattern"
+        minHeight={"100vh"}
+        maxHeight={"max-content"}
+      >
         <GridItem
           colSpan={4}
           alignSelf={"start"}

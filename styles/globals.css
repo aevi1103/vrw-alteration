@@ -10,11 +10,6 @@ html {
   scroll-behavior: smooth;
 }
 
-#container {
-  min-height: 100vh;
-  max-height: max-content;
-}
-
 .bg-pattern {
   background-color: var(--primary-color);
   background-image: radial-gradient(#000000 0.5px, transparent 0.5px),
