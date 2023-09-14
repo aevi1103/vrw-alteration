@@ -16,11 +16,8 @@ export default function Login() {
           access_type: "offline",
           prompt: "consent",
         },
-        redirectTo: "https://bpunsuqccqgwtextyfpb.supabase.co/auth/v1/callback",
       },
     });
-
-    console.log("data", data);
   };
 
   return (
