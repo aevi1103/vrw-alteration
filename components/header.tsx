@@ -2,7 +2,6 @@ import { Container, GridItem } from "@chakra-ui/layout";
 import React from "react";
 import { Logo } from "./logo";
 import { useScrollY } from "@/hooks/useScrollY";
-import { useHeaderStore } from "@/store/useHeaderSTORE";
 
 export const Header = () => {
   const { scrollY } = useScrollY();

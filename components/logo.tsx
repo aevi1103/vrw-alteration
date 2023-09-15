@@ -4,7 +4,7 @@ import Image from "next/image";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { AppMenu } from "./menu";
 import { useScrollY } from "@/hooks/useScrollY";
-import { useHeaderStore } from "@/store/useHeaderSTORE";
+import { useMenuHeaderStore } from "@/store/useMenuHeaderStore";
 
 export const Logo = ({
   height = 20,
@@ -15,7 +15,7 @@ export const Logo = ({
 }) => {
   const { scrollY } = useScrollY();
   const [isLarge] = useMediaQuery("(min-width: 768px)");
-  const { toggleMenu } = useHeaderStore();
+  const { toggleMenu } = useMenuHeaderStore();
 
   if (scrollY > 0) {
     return (

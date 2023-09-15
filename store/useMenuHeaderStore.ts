@@ -5,7 +5,7 @@ type HeaderState = {
   toggleMenu: () => void;
 };
 
-export const useHeaderStore = create<HeaderState>((set) => ({
+export const useMenuHeaderStore = create<HeaderState>((set) => ({
   isMenuOpen: false,
   toggleMenu: () => set((state) => ({ isMenuOpen: !state.isMenuOpen })),
 }));

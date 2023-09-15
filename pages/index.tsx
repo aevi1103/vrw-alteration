@@ -22,7 +22,7 @@ import { supabase } from "@/lib/supabase-client";
 import { DbResult } from "@/database.types";
 import { AnimatedComponent, Header, Layout } from "@/components";
 import { AboutRecord } from "@/lib/types/about";
-import { useHeaderStore } from "@/store/useHeaderSTORE";
+import { useMenuHeaderStore } from "@/store/useMenuHeaderStore";
 
 export default function Home({
   prices,
@@ -31,7 +31,7 @@ export default function Home({
   prices: any;
   about: AboutRecord[];
 }) {
-  const { isMenuOpen, toggleMenu } = useHeaderStore();
+  const { isMenuOpen, toggleMenu } = useMenuHeaderStore();
 
   return (
     <>
