@@ -1,5 +1,4 @@
 import {
-  Grid,
   GridItem,
   Container,
   Drawer,
@@ -9,14 +8,7 @@ import {
   DrawerHeader,
   DrawerBody,
 } from "@chakra-ui/react";
-import {
-  AppMenu,
-  Services,
-  Gallery,
-  About,
-  Logo,
-  ContactForm,
-} from "@/components";
+import { AppMenu, Services, Gallery, About, ContactForm } from "@/components";
 import React from "react";
 import { supabase } from "@/lib/supabase-client";
 import { DbResult } from "@/database.types";

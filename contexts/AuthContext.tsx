@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             access_type: "offline",
             prompt: "consent",
           },
+          redirectTo: "",
         },
       });
     },
@@ -81,11 +82,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     authenticating,
   };
 
-  console.log("auth provider", {
-    supabase,
-    user,
-    authenticating,
-  });
+  // console.log("auth provider", {
+  //   supabase,
+  //   user,
+  //   authenticating,
+  // });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
