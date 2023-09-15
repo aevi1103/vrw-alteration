@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             access_type: "offline",
             prompt: "consent",
           },
-          redirectTo: "",
+          redirectTo: `${window.location.origin}/admin`,
         },
       });
     },
