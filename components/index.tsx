@@ -4,3 +4,8 @@ export * from "./gallery";
 export * from "./about";
 export * from "./logo";
 export * from "./contact-form";
+export * from "./animated-component";
+export * from "./header";
+export * from "./layout";
+export * from "./loading-screen";
+export * from "./logo";

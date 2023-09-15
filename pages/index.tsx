@@ -2,16 +2,12 @@ import {
   Grid,
   GridItem,
   Container,
-  Flex,
-  Spacer,
   Drawer,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  useDisclosure,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import {
   AppMenu,
@@ -21,15 +17,12 @@ import {
   Logo,
   ContactForm,
 } from "@/components";
-import { useState } from "react";
-import useWindowScroll from "beautiful-react-hooks/useWindowScroll";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import Image from "next/image";
 import React from "react";
 import { supabase } from "@/lib/supabase-client";
 import { DbResult } from "@/database.types";
-import { AnimatedComponent } from "@/components/animated-component";
+import { AnimatedComponent, Header, Layout } from "@/components";
 import { AboutRecord } from "@/lib/types/about";
+import { useHeaderStore } from "@/store/useHeaderSTORE";
 
 export default function Home({
   prices,
@@ -38,65 +31,12 @@ export default function Home({
   prices: any;
   about: AboutRecord[];
 }) {
-  const [scrollY, setScrollY] = useState(0);
-  const onWindowScroll = useWindowScroll();
-
-  const [isLarge] = useMediaQuery("(min-width: 768px)");
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  onWindowScroll((event) => {
-    if (typeof window !== "undefined") {
-      const scroll = window.scrollY;
-      setScrollY(scroll);
-      localStorage.setItem("scrollY", scroll.toString());
-    }
-  });
+  const { isMenuOpen, toggleMenu } = useHeaderStore();
 
   return (
     <>
-      <Grid
-        templateColumns="repeat(4, 1fr)"
-        className="bg-pattern"
-        minHeight={"100vh"}
-        maxHeight={"max-content"}
-      >
-        <GridItem
-          colSpan={4}
-          alignSelf={"start"}
-          position={"sticky"}
-          top={0}
-          zIndex={999}
-          backdropFilter={scrollY > 0 ? "blur(10px)" : "blur(0px)"}
-          shadow={scrollY > 0 ? "md" : "none"}
-        >
-          <Container>
-            {scrollY > 0 ? (
-              <Flex padding={2} alignItems={"center"}>
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  style={{
-                    objectFit: "contain",
-                  }}
-                  height={200}
-                  width={200}
-                />
-                <Spacer />
-                <HamburgerIcon
-                  width={8}
-                  height={8}
-                  onClick={onOpen}
-                  cursor={"pointer"}
-                />
-              </Flex>
-            ) : (
-              <>
-                <Logo />
-                {isLarge && <AppMenu />}
-              </>
-            )}
-          </Container>
-        </GridItem>
+      <Layout>
+        <Header />
 
         <GridItem colSpan={4} id="services">
           <Container>
@@ -127,14 +67,19 @@ export default function Home({
             <ContactForm />
           </Container>
         </GridItem>
-      </Grid>
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={"xs"}>
+      </Layout>
+      <Drawer
+        isOpen={isMenuOpen}
+        placement="right"
+        onClose={toggleMenu}
+        size={"xs"}
+      >
         <DrawerOverlay />
         <DrawerContent backgroundColor={"brand.primary"}>
           <DrawerCloseButton />
           <DrawerHeader />
           <DrawerBody>
-            <AppMenu isVertical onClose={onClose} />
+            <AppMenu isVertical onClose={toggleMenu} />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

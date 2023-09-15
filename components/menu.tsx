@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { Grid, GridItem, Text } from "@chakra-ui/react";
 import Link from "next/link";
 // import { useAuth } from "@/lib/utils/useAuth";
@@ -35,7 +36,7 @@ export function AppMenu({
   isVertical?: boolean;
   onClose?: () => void;
 }) {
-  // const { user, signIn, auth } = useAuth();
+  const { user, signOut } = useAuth();
 
   const scrollToSection = (targetId: string) => {
     const targetElement = document.getElementById(targetId);
@@ -61,16 +62,24 @@ export function AppMenu({
 
   return (
     <Grid
-      gridTemplateColumns={isVertical ? "1fr" : "repeat(5 , minmax(0, 1fr))"}
+      gridTemplateColumns={
+        isVertical
+          ? "1fr"
+          : user
+          ? "repeat(6, minmax(0, 1fr))"
+          : "repeat(5, minmax(0, 1fr))"
+      }
       marginBottom={3}
       gap={isVertical ? 5 : 0}
       marginTop={isVertical ? 20 : 10}
     >
-      <LinkWrapper>
-        <Link href={"/"} onClick={onClick}>
-          Home
-        </Link>
-      </LinkWrapper>
+      {!user && (
+        <LinkWrapper>
+          <Link href={"/"} onClick={onClick}>
+            Home
+          </Link>
+        </LinkWrapper>
+      )}
 
       <LinkWrapper>
         <Text onClick={() => scrollToSection("services")}>Services</Text>
@@ -84,22 +93,18 @@ export function AppMenu({
       <LinkWrapper>
         <Text onClick={() => scrollToSection("contact")}>Contact</Text>
       </LinkWrapper>
-      {/* {user !== undefined && (
-        <LinkWrapper>
-          <Link
-            href={"/"}
-            onClick={() => {
-              if (user) {
-                auth.signOut();
-              } else {
-                signIn();
-              }
-            }}
-          >
-            {user ? "Logout" : "Login"}
-          </Link>
-        </LinkWrapper>
-      )} */}
+      {user && (
+        <>
+          <LinkWrapper>
+            <Link href={"/admin"} onClick={onClick}>
+              Admin
+            </Link>
+          </LinkWrapper>
+          <LinkWrapper>
+            <Text onClick={signOut}>Logout</Text>
+          </LinkWrapper>
+        </>
+      )}
     </Grid>
   );
 }
