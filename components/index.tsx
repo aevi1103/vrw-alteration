@@ -9,3 +9,4 @@ export * from "./header";
 export * from "./layout";
 export * from "./loading-screen";
 export * from "./logo";
+export * from "./admin-layout";

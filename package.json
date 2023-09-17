@@ -24,6 +24,7 @@
     "beautiful-react-hooks": "^5.0.0",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
+    "faker": "^6.6.6",
     "firebase": "^10.3.0",
     "firebase-admin": "^11.10.1",
     "framer-motion": "^10.16.1",
@@ -42,6 +43,7 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@types/lodash.groupby": "^4.6.7",
     "@types/nodemailer": "^6.4.9",
     "supabase": "^1.93.0"

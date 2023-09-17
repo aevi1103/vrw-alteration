@@ -7,7 +7,7 @@ import {
 } from "react";
 import { Subscription, SupabaseClient, User } from "@supabase/supabase-js";
 import supabase from "@/lib/supabase-client";
-import { useRouter } from "next/router";
+import { DbResult } from "@/database.types";
 
 type SupabaseContextType = {
   supabase: SupabaseClient | null;
@@ -15,6 +15,10 @@ type SupabaseContextType = {
   authenticating: boolean;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
+  email: string | null | undefined;
+  userId: string | null | undefined;
+  name: string | null;
+  role: string | null;
 };
 
 const AuthContext = createContext<SupabaseContextType | undefined>(undefined);
@@ -32,9 +36,12 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [authenticating, setAuthenticating] = useState(true); // Renamed loading state
+  const [email, setEmail] = useState<string | null | undefined>(null);
+  const [userId, setUserId] = useState<string | null | undefined>(null);
+  const [name, setName] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     let subscription: Subscription | null = null;
@@ -46,7 +53,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { data: subs } = await supabase.auth.onAuthStateChange(
         async (event, session) => {
           const currentUser = session?.user ?? null;
+
           setUser(currentUser);
+
+          // set user info
+          const { identities, email, id } = currentUser || {};
+          const [identity] = identities || [];
+          const { identity_data } = identity || {};
+          const { name } = identity_data || {};
+
+          setEmail(email);
+          setUserId(id);
+          setName(name);
+
+          // fetch roles
+          if (id) {
+            fetchRole(id).then((role) => {
+              setRole(role?.role);
+            });
+          }
         }
       );
 
@@ -79,7 +104,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signOut: async () => {
       await supabase.auth.signOut();
     },
-    authenticating,
+    authenticating: authenticating,
+    email,
+    userId,
+    name,
+    role,
   };
 
   // console.log("auth provider", {
@@ -90,3 +119,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+async function fetchRole(userid: string) {
+  const query = supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userid);
+
+  const res: DbResult<typeof query> = await query;
+  const { data, error } = res;
+
+  if (error) {
+    throw error;
+  }
+
+  const [role] = data ?? [];
+
+  return role;
+}

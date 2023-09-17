@@ -11,39 +11,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      _prisma_migrations: {
-        Row: {
-          applied_steps_count: number;
-          checksum: string;
-          finished_at: string | null;
-          id: string;
-          logs: string | null;
-          migration_name: string;
-          rolled_back_at: string | null;
-          started_at: string;
-        };
-        Insert: {
-          applied_steps_count?: number;
-          checksum: string;
-          finished_at?: string | null;
-          id: string;
-          logs?: string | null;
-          migration_name: string;
-          rolled_back_at?: string | null;
-          started_at?: string;
-        };
-        Update: {
-          applied_steps_count?: number;
-          checksum?: string;
-          finished_at?: string | null;
-          id?: string;
-          logs?: string | null;
-          migration_name?: string;
-          rolled_back_at?: string | null;
-          started_at?: string;
-        };
-        Relationships: [];
-      };
       about: {
         Row: {
           created_at: string;
@@ -107,6 +74,55 @@ export interface Database {
             foreignKeyName: "prices_category_id_fkey";
             columns: ["category_id"];
             referencedRelation: "categories";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      roles: {
+        Row: {
+          created_at: string;
+          role: string;
+        };
+        Insert: {
+          created_at?: string;
+          role: string;
+        };
+        Update: {
+          created_at?: string;
+          role?: string;
+        };
+        Relationships: [];
+      };
+      user_roles: {
+        Row: {
+          created_at: string;
+          id: string;
+          role: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          role?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          role?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_role_fkey";
+            columns: ["role"];
+            referencedRelation: "roles";
+            referencedColumns: ["role"];
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
             referencedColumns: ["id"];
           }
         ];

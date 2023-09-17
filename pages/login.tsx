@@ -5,7 +5,9 @@ import GoogleButton from "react-google-button";
 import { Layout, Logo } from "@/components";
 
 export default function Login() {
-  const { user, signIn, signOut } = useAuth();
+  const { user, signIn, signOut, role } = useAuth();
+
+  console.log("login", { user, role });
 
   return (
     <Layout>

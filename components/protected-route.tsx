@@ -5,11 +5,14 @@ import { useAuth, AuthProvider } from "@/contexts/AuthContext";
 import { LoadingScreen } from "./loading-screen";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { user, authenticating } = useAuth();
+  const { name, email, userId, user, role, authenticating } = useAuth();
   const router = useRouter();
 
   console.log("protected route", {
-    user,
+    name,
+    email,
+    userId,
+    role,
     authenticating,
   });
 
@@ -19,13 +22,15 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     }
 
     if (!user) {
-      // Redirect to the login page if the user is not authenticated
       router.push("/login");
     }
-  }, [user, router, authenticating]);
 
-  if (authenticating || !user) {
-    // Render an authenticating state while data is being fetched
+    if (role === undefined) {
+      router.push("/login");
+    }
+  }, [user, router, authenticating, role]);
+
+  if (authenticating || !user || !role) {
     return <LoadingScreen />;
   }
 
