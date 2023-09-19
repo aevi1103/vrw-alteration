@@ -27,7 +27,8 @@ const theme = extendTheme({
           color: "white",
           transition: "all 0.2s",
           _hover: {
-            transform: "scale(1.1)",
+            // transform: "scale(1.1)",
+            bg: `rgba(66, 107, 123, .8)`,
           },
         },
       },

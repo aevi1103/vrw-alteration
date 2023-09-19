@@ -53,15 +53,15 @@ export default function AdminLayout({
               width={180}
             />
             <Spacer />
-            <Box marginRight={2}>
+            <Box>
               <Menu>
                 <MenuButton
                   px={4}
                   py={2}
                   transition="all 0.2s"
                   borderRadius="md"
-                  _hover={{ bg: "brand.secondary", color: "white" }}
-                  _expanded={{ bg: "brand.secondary", color: "white" }}
+                  // _hover={{ bg: "brand.secondary", color: "white" }}
+                  // _expanded={{ bg: "brand.secondary", color: "white" }}
                 >
                   Hi {name}!
                 </MenuButton>
@@ -79,16 +79,10 @@ export default function AdminLayout({
                   icon={<HamburgerIcon />}
                   variant="outline"
                   border={"none"}
-                  transition="all 0.2s"
-                  borderRadius="md"
-                  bg={"brand.secondary"}
-                  color={"white"}
-                  _hover={{
-                    bg: "brand.secondary",
-                    color: "white",
-                    transform: "scale(1.1)",
-                  }}
-                  _expanded={{ bg: "brand.secondary", color: "white" }}
+                  padding={0}
+                  fontSize={"2xl"}
+                  _hover={{ bg: "transparent", transform: "scale(1.1)" }}
+                  _expanded={{ bg: "transparent", transform: "scale(1.1)" }}
                 />
                 <MenuList>
                   <MenuItem onClick={() => router.push("/admin")}>

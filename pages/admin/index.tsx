@@ -15,30 +15,35 @@ import {
   FormLabel,
   Heading,
   Input,
-  InputGroup,
-  InputLeftAddon,
-  InputRightAddon,
-  Select,
   Spacer,
   Stack,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
   Textarea,
-  Tfoot,
   Th,
   Thead,
   Tr,
-  VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
 import { faker } from "@faker-js/faker";
-
 import AdminLayout from "@/components/admin-layout";
 import { AddIcon } from "@chakra-ui/icons";
+import supabase from "@/lib/supabase-client";
+import { DbResult } from "@/database.types";
+import { Select } from "chakra-react-select";
+
+type PriceOption = {
+  label: string;
+  value: string;
+};
+
+type PriceCategoryOption = {
+  label: string;
+  options: PriceOption[];
+};
 
 const generateData = (count: number) => {
   const data = [];
@@ -59,10 +64,11 @@ const generateData = (count: number) => {
   return data;
 };
 
-export default function Admin() {
+export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
+  console.log({ prices });
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
-
   const samepleData = generateData(10);
 
   return (
@@ -152,8 +158,10 @@ export default function Admin() {
               </Box>
 
               <Box>
-                <FormLabel htmlFor="item">Item Description</FormLabel>
-                <Input id="item" />
+                <FormLabel htmlFor="item">Alteration</FormLabel>
+                <Select<PriceOption, false, PriceCategoryOption>
+                  options={prices}
+                />
               </Box>
 
               <Box>
@@ -195,4 +203,35 @@ export default function Admin() {
       </Drawer>
     </AdminLayout>
   );
+}
+
+export async function getServerSideProps() {
+  const prices = await getPrices();
+  return {
+    props: {
+      prices,
+    },
+  };
+}
+
+async function getPrices() {
+  const query = supabase
+    .from("categories")
+    .select("*, prices(id, price, service))");
+
+  const prices: DbResult<typeof query> = await query;
+  const result = prices?.data || [];
+
+  const categories: PriceCategoryOption[] = result.map(
+    ({ category, prices }: any) => ({
+      label: category,
+      options: prices.map(({ service, id, price }: any) => ({
+        label: `${service} - $${price}`,
+        value: id,
+        price,
+      })),
+    })
+  );
+
+  return categories;
 }

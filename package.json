@@ -22,11 +22,13 @@
     "@vercel/edge-config": "^0.2.1",
     "animate.css": "^4.1.1",
     "beautiful-react-hooks": "^5.0.0",
+    "chakra-react-select": "^4.7.2",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
     "faker": "^6.6.6",
     "firebase": "^10.3.0",
     "firebase-admin": "^11.10.1",
+    "formik": "^2.4.5",
     "framer-motion": "^10.16.1",
     "lodash.groupby": "^4.6.0",
     "next": "^13.4.19",
@@ -40,6 +42,7 @@
     "react-responsive-carousel": "^3.2.23",
     "swr": "^2.2.2",
     "typescript": "5.0.4",
+    "yup": "^1.2.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
