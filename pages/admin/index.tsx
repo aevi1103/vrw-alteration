@@ -4,6 +4,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Checkbox,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -12,6 +13,8 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   Input,
@@ -26,18 +29,26 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  useToast,
+  Text,
+  Switch,
 } from "@chakra-ui/react";
-import React from "react";
-import { faker } from "@faker-js/faker";
+import React, { useMemo } from "react";
 import AdminLayout from "@/components/admin-layout";
 import { AddIcon } from "@chakra-ui/icons";
 import supabase from "@/lib/supabase-client";
 import { DbResult } from "@/database.types";
 import { Select } from "chakra-react-select";
+import * as Yup from "yup";
+import { FormikHelpers, useFormik } from "formik";
+import numeral from "numeral";
+import useSWR, { mutate } from "swr";
+import { fetcher } from "@/lib/utils/fetcher";
 
 type PriceOption = {
   label: string;
   value: string;
+  price: number;
 };
 
 type PriceCategoryOption = {
@@ -45,31 +56,141 @@ type PriceCategoryOption = {
   options: PriceOption[];
 };
 
-const generateData = (count: number) => {
-  const data = [];
-  for (let i = 0; i < count; i++) {
-    data.push({
-      ticket: faker.number.int,
-      salesPerson: faker.person.fullName(),
-      customer: faker.company.name(),
-      qty: faker.number.int,
-      itemDesc: faker.commerce.productName(),
-      alterationDesc: faker.lorem.sentence(),
-      unitPrice: faker.commerce.price(),
-      totalAmount: faker.commerce.price(),
-      remarks: faker.lorem.sentence(),
-      notes: faker.lorem.paragraph(),
-    });
-  }
-  return data;
-};
-
 export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
-  console.log({ prices });
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
-  const samepleData = generateData(10);
+  const toast = useToast();
+
+  const { data: alterations, isLoading } = useSWR("/api/alterations", fetcher);
+
+  console.log({ alterations, isLoading });
+
+  const allPrices = useMemo(
+    () => prices.flatMap((item) => item.options),
+    [prices]
+  );
+
+  const validationSchema = Yup.object().shape({
+    ticket_num: Yup.number(),
+    sales_person: Yup.string(),
+    customer_name: Yup.string().required("Customer is required"),
+    qty: Yup.number().required("Qty is required"),
+    price_id: Yup.object().shape({
+      label: Yup.string().required("Item is required"),
+      value: Yup.string().required("Item is required"),
+      price: Yup.number().required("Item is required"),
+    }),
+    remarks: Yup.string().required("Remarks is required"),
+    paid: Yup.boolean().default(false),
+  });
+
+  type FormValues = Yup.InferType<typeof validationSchema>;
+
+  const onSubmit = async (
+    values: FormValues,
+    { resetForm }: FormikHelpers<FormValues>
+  ) => {
+    const { error } = await supabase.from("alterations").insert({
+      created_at: new Date().toISOString(),
+      ticket_num: values.ticket_num,
+      sales_person: values.sales_person,
+      customer_name: values.customer_name,
+      qty: values.qty,
+      price_id: values.price_id.value,
+      remarks: values.remarks,
+      paid: values.paid,
+    });
+
+    if (error) {
+      toast({
+        title: "Error creating ticket.",
+        description: "There was an error creating your ticket.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    mutate("/api/alterations");
+    resetForm();
+    onClose();
+
+    toast({
+      title: "Ticket created.",
+      description: "We've created your ticket for you.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
+  const initialValues: FormValues = {
+    ticket_num: 0,
+    sales_person: "",
+    customer_name: "",
+    qty: 1,
+    price_id: {
+      label: "",
+      value: "",
+      price: 0,
+    },
+    remarks: "",
+    paid: false,
+  };
+
+  const {
+    handleSubmit,
+    handleBlur,
+    errors,
+    touched,
+    values,
+    handleChange,
+    isSubmitting,
+    setFieldValue,
+    resetForm,
+  } = useFormik<FormValues>({
+    initialValues,
+    onSubmit,
+    validationSchema,
+  });
+
+  const unitPrice = useMemo(
+    () =>
+      allPrices.find(
+        (item: PriceOption) => item.value === values.price_id.value
+      )?.price || 0,
+    [values, allPrices]
+  );
+
+  const onPaid = async (id: number, checked: boolean) => {
+    console.log({ id, checked });
+
+    const { error } = await supabase
+      .from("alterations")
+      .update({ paid: checked, created_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Error updating ticket.",
+        description: "There was an error updating your ticket.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    mutate("/api/alterations");
+    toast({
+      title: "Ticket updated.",
+      description: "We've updated your ticket.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
 
   return (
     <AdminLayout>
@@ -86,34 +207,46 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
 
         <CardBody>
           <TableContainer>
-            <Table variant="simple">
+            <Table variant="simple" size={"sm"}>
               <Thead>
                 <Tr>
+                  <Th>Paid</Th>
                   <Th>Ticker #</Th>
                   <Th>Sales Person</Th>
                   <Th>Customer</Th>
                   <Th isNumeric>Qty</Th>
-                  <Th>Item Desc.</Th>
                   <Th>Alteration Desc.</Th>
                   <Th isNumeric>Unit Price</Th>
                   <Th isNumeric>Total Amount</Th>
                   <Th>Remarks</Th>
-                  <Th>Notes</Th>
+                  <Th>Date Created</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {samepleData.map((data, index) => (
+                {alterations?.map((data: any, index: number) => (
                   <Tr key={index}>
-                    <Td>{data.ticket(10000)}</Td>
-                    <Td>{data.salesPerson}</Td>
-                    <Td>{data.customer}</Td>
-                    <Td isNumeric>{data.qty(10)}</Td>
-                    <Td>{data.itemDesc}</Td>
-                    <Td>{data.alterationDesc}</Td>
-                    <Td isNumeric>{data.unitPrice}</Td>
-                    <Td isNumeric>{data.totalAmount}</Td>
+                    <Td>
+                      <Switch
+                        defaultChecked={data.paid}
+                        onChange={async (e) => {
+                          await onPaid(data.id, e.target.checked);
+                        }}
+                      />
+                      {/* {data.paid ? (
+                        <Badge colorScheme="green">PAID</Badge>
+                      ) : (
+                        <Badge colorScheme="red">UNPAID</Badge>
+                      )} */}
+                    </Td>
+                    <Td>{data.ticket_num}</Td>
+                    <Td>{data.sales_person}</Td>
+                    <Td>{data.customer_name}</Td>
+                    <Td isNumeric>{data.qty}</Td>
+                    <Td>{data.price.service}</Td>
+                    <Td isNumeric>${data.price.price}</Td>
+                    <Td isNumeric>${data.price.price * data.qty}</Td>
                     <Td>{data.remarks}</Td>
-                    <Td>{data.notes}</Td>
+                    <Td>{new Date(data.created_at).toLocaleString()}</Td>
                   </Tr>
                 ))}
               </Tbody>
@@ -136,68 +269,171 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
           </DrawerHeader>
 
           <DrawerBody>
-            <Stack spacing="24px">
-              <Box>
-                <FormLabel htmlFor="ticketNum">Ticket #</FormLabel>
-                <Input ref={firstField as any} id="ticketNum" />
-              </Box>
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                width: "100%",
+              }}
+            >
+              <Stack spacing="24px">
+                <Box>
+                  <FormControl
+                    isInvalid={
+                      (errors.ticket_num && touched.ticket_num) as boolean
+                    }
+                  >
+                    <FormLabel htmlFor="ticket_num">Ticket #</FormLabel>
+                    <Input
+                      ref={firstField as any}
+                      type="number"
+                      name="ticket_num"
+                      value={values.ticket_num}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <FormErrorMessage>{errors.ticket_num}</FormErrorMessage>
+                  </FormControl>
+                </Box>
 
-              <Box>
-                <FormLabel htmlFor="salesPerson">Sales Person</FormLabel>
-                <Input id="salesPerson" />
-              </Box>
+                <Box>
+                  <FormControl
+                    isInvalid={
+                      (errors.sales_person && touched.sales_person) as boolean
+                    }
+                  >
+                    <FormLabel htmlFor="sales_person">Sales Person</FormLabel>
+                    <Input
+                      name="sales_person"
+                      value={values.sales_person}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
 
-              <Box>
-                <FormLabel htmlFor="customer">Customer</FormLabel>
-                <Input id="customer" />
-              </Box>
+                    <FormErrorMessage>{errors.sales_person}</FormErrorMessage>
+                  </FormControl>
+                </Box>
 
-              <Box>
-                <FormLabel htmlFor="qty">Qty</FormLabel>
-                <Input id="qty" type="number" />
-              </Box>
+                <Box>
+                  <FormControl
+                    isInvalid={
+                      (errors.customer_name && touched.customer_name) as boolean
+                    }
+                  >
+                    <FormLabel htmlFor="customer_name">Customer</FormLabel>
+                    <Input
+                      name="customer_name"
+                      value={values.customer_name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
 
-              <Box>
-                <FormLabel htmlFor="item">Alteration</FormLabel>
-                <Select<PriceOption, false, PriceCategoryOption>
-                  options={prices}
-                />
-              </Box>
+                    <FormErrorMessage>{errors.customer_name}</FormErrorMessage>
+                  </FormControl>
+                </Box>
 
-              <Box>
-                <FormLabel htmlFor="alteration">
-                  Alteration Description
-                </FormLabel>
-                <Input id="alteration" />
-              </Box>
+                <Box>
+                  <FormControl
+                    isInvalid={(errors.qty && touched.qty) as boolean}
+                  >
+                    <FormLabel htmlFor="qty">Qty</FormLabel>
+                    <Input
+                      name="qty"
+                      value={values.qty}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      type="number"
+                      min={1}
+                    />
 
-              <Box>
-                <FormLabel htmlFor="unitPrice">Unit Price</FormLabel>
-                {/* <Input id="unitPrice" type="number" /> */}
-              </Box>
+                    <FormErrorMessage>{errors.qty}</FormErrorMessage>
+                  </FormControl>
+                </Box>
 
-              <Box>
-                <FormLabel htmlFor="total">Total Amount</FormLabel>
-                {/* <Input id="total" type="number" /> */}
-              </Box>
+                <Box>
+                  <FormControl
+                    isInvalid={
+                      (errors.price_id?.value &&
+                        touched.price_id?.value) as boolean
+                    }
+                  >
+                    <FormLabel htmlFor="item">Alteration</FormLabel>
+                    <Select<PriceOption, false, PriceCategoryOption>
+                      options={prices}
+                      onBlur={handleBlur}
+                      name="price_id"
+                      value={values.price_id}
+                      onChange={(value) => {
+                        setFieldValue("price_id", value);
+                      }}
+                    />
+                  </FormControl>
+                </Box>
 
-              <Box>
-                <FormLabel htmlFor="remarks">Remarks</FormLabel>
-                <Textarea id="remarks" />
-              </Box>
+                <Box>
+                  <FormLabel>Unit Price</FormLabel>
+                  <Text>{numeral(unitPrice).format("$0,0.00")}</Text>
+                </Box>
 
-              <Box>
-                <FormLabel htmlFor="notes">Notes</FormLabel>
-                <Textarea id="notes" />
-              </Box>
-            </Stack>
+                <Box>
+                  <FormLabel>Total Amount</FormLabel>
+                  <Text>
+                    {numeral(unitPrice * values.qty).format("$0,0.00")}
+                  </Text>
+                </Box>
+
+                <Box>
+                  <FormControl
+                    isInvalid={(errors.paid && touched.paid) as boolean}
+                  >
+                    <FormLabel htmlFor="paid">Paid</FormLabel>
+                    <Checkbox
+                      name="paid"
+                      isChecked={values.paid}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <FormErrorMessage>{errors.paid}</FormErrorMessage>
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl
+                    isInvalid={(errors.remarks && touched.remarks) as boolean}
+                  >
+                    <FormLabel htmlFor="remarks">Remarks</FormLabel>
+                    <Textarea
+                      name="remarks"
+                      value={values.remarks}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+
+                    <FormErrorMessage>{errors.remarks}</FormErrorMessage>
+                  </FormControl>
+                </Box>
+              </Stack>
+            </form>
           </DrawerBody>
 
           <DrawerFooter borderTopWidth="1px">
-            <Button variant="outline" onClick={onClose}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                resetForm();
+                onClose();
+              }}
+              marginRight={2}
+            >
               Cancel
             </Button>
-            <Button colorScheme="blue">Submit</Button>
+            <Button
+              colorScheme="green"
+              isLoading={isSubmitting}
+              type="submit"
+              onClick={() => handleSubmit()}
+            >
+              Submit
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
@@ -234,4 +470,10 @@ async function getPrices() {
   );
 
   return categories;
+}
+
+async function getAlterations() {
+  const query = supabase.from("alterations").select("*");
+  const alterations: DbResult<typeof query> = await query;
+  return alterations.data;
 }

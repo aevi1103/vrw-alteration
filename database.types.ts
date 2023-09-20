@@ -29,6 +29,61 @@ export interface Database {
         };
         Relationships: [];
       };
+      alterations: {
+        Row: {
+          created_at: string;
+          customer_name: string | null;
+          discount_percent: number | null;
+          id: number;
+          paid: boolean | null;
+          price_id: string;
+          qty: number;
+          remarks: string | null;
+          sales_person: string | null;
+          ticket_num: number | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          customer_name?: string | null;
+          discount_percent?: number | null;
+          id?: number;
+          paid?: boolean | null;
+          price_id: string;
+          qty: number;
+          remarks?: string | null;
+          sales_person?: string | null;
+          ticket_num?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          customer_name?: string | null;
+          discount_percent?: number | null;
+          id?: number;
+          paid?: boolean | null;
+          price_id?: string;
+          qty?: number;
+          remarks?: string | null;
+          sales_person?: string | null;
+          ticket_num?: number | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "alterations_price_id_fkey";
+            columns: ["price_id"];
+            referencedRelation: "prices";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "alterations_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       categories: {
         Row: {
           category: string | null;

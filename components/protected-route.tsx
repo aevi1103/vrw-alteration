@@ -5,16 +5,8 @@ import { useAuth, AuthProvider } from "@/contexts/AuthContext";
 import { LoadingScreen } from "./loading-screen";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { name, email, userId, user, role, authenticating } = useAuth();
+  const { user, role, authenticating } = useAuth();
   const router = useRouter();
-
-  console.log("protected route", {
-    name,
-    email,
-    userId,
-    role,
-    authenticating,
-  });
 
   useEffect(() => {
     if (authenticating) {
