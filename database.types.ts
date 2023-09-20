@@ -41,6 +41,7 @@ export interface Database {
           remarks: string | null;
           sales_person: string | null;
           ticket_num: number | null;
+          updated_at: string | null;
           user_id: string | null;
         };
         Insert: {
@@ -54,6 +55,7 @@ export interface Database {
           remarks?: string | null;
           sales_person?: string | null;
           ticket_num?: number | null;
+          updated_at?: string | null;
           user_id?: string | null;
         };
         Update: {
@@ -67,6 +69,7 @@ export interface Database {
           remarks?: string | null;
           sales_person?: string | null;
           ticket_num?: number | null;
+          updated_at?: string | null;
           user_id?: string | null;
         };
         Relationships: [
