@@ -168,7 +168,7 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
 
     const { error } = await supabase
       .from("alterations")
-      .update({ paid: checked, created_at: new Date().toISOString() })
+      .update({ paid: checked, updated_at: new Date().toISOString() })
       .eq("id", id);
 
     if (error) {
@@ -220,6 +220,7 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                   <Th isNumeric>Total Amount</Th>
                   <Th>Remarks</Th>
                   <Th>Date Created</Th>
+                  <Th>Date Updated</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -232,11 +233,6 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                           await onPaid(data.id, e.target.checked);
                         }}
                       />
-                      {/* {data.paid ? (
-                        <Badge colorScheme="green">PAID</Badge>
-                      ) : (
-                        <Badge colorScheme="red">UNPAID</Badge>
-                      )} */}
                     </Td>
                     <Td>{data.ticket_num}</Td>
                     <Td>{data.sales_person}</Td>
@@ -247,6 +243,10 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                     <Td isNumeric>${data.price.price * data.qty}</Td>
                     <Td>{data.remarks}</Td>
                     <Td>{new Date(data.created_at).toLocaleString()}</Td>
+                    <Td>
+                      {data.updated_at &&
+                        new Date(data.updated_at).toLocaleString()}
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
@@ -470,10 +470,4 @@ async function getPrices() {
   );
 
   return categories;
-}
-
-async function getAlterations() {
-  const query = supabase.from("alterations").select("*");
-  const alterations: DbResult<typeof query> = await query;
-  return alterations.data;
 }

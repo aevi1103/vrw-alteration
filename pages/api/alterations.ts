@@ -8,7 +8,10 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const query = supabase.from("alterations").select("*, price:price_id(*)");
+      const query = supabase
+        .from("alterations")
+        .select("*, price:price_id(*)")
+        .order("created_at", { ascending: false });
       const result: DbResult<typeof query> = await query;
 
       res.status(200).json(result.data);
@@ -16,7 +19,9 @@ export default async function handler(
       console.error(error);
       res.status(500).json(error);
     }
-  } else {
-    res.status(405).end(); // Method Not Allowed
+
+    return;
   }
+
+  res.status(405).end(); // Method Not Allowed
 }
