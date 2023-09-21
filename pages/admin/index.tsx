@@ -32,6 +32,8 @@ import {
   useToast,
   Text,
   Switch,
+  ListItem,
+  UnorderedList,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import AdminLayout from "@/components/admin-layout";
@@ -163,8 +165,8 @@ export default function Admin({
     }
 
     mutate("/api/alterations");
-    // resetForm();
-    // onClose();
+    resetForm();
+    onClose();
 
     toast({
       title: "Ticket created.",
@@ -205,13 +207,15 @@ export default function Admin({
     validationSchema,
   });
 
-  // const unitPrice = useMemo(
-  //   () =>
-  //     allPrices.find(
-  //       (item: PriceOption) => item.value === values.price_id.value
-  //     )?.price || 0,
-  //   [values, allPrices]
-  // );
+  const totalUnitPrice = useMemo(
+    () => values.price_id.reduce((acc, item) => acc + item.price, 0),
+    [values.price_id]
+  );
+
+  const totalAmount = useMemo(
+    () => totalUnitPrice * values.qty,
+    [totalUnitPrice, values.qty]
+  );
 
   const onPaid = async (id: number, checked: boolean) => {
     console.log({ id, checked });
@@ -266,39 +270,65 @@ export default function Admin({
                   <Th>Customer</Th>
                   <Th isNumeric>Qty</Th>
                   <Th>Item</Th>
-                  {/* <Th isNumeric>Unit Price</Th>
-                  <Th isNumeric>Total Amount</Th> */}
+                  <Th isNumeric>Alterations</Th>
+                  <Th isNumeric>Total Unit Price</Th>
+                  <Th isNumeric>Total Amount</Th>
                   <Th>Remarks</Th>
                   <Th>Date Created</Th>
                   <Th>Date Updated</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {alterations?.map((data: any, index: number) => (
-                  <Tr key={index}>
-                    <Td>
-                      <Switch
-                        defaultChecked={data.paid}
-                        onChange={async (e) => {
-                          await onPaid(data.id, e.target.checked);
-                        }}
-                      />
-                    </Td>
-                    <Td>{data.ticket_num}</Td>
-                    <Td>{data.sales_person}</Td>
-                    <Td>{data.customer_name}</Td>
-                    <Td isNumeric>{data.qty}</Td>
-                    <Td>{data.alteration_items.description}</Td>
-                    {/* <Td isNumeric>${data.price.price}</Td>
-                    <Td isNumeric>${data.price.price * data.qty}</Td> */}
-                    <Td>{data.remarks}</Td>
-                    <Td>{new Date(data.created_at).toLocaleString()}</Td>
-                    <Td>
-                      {data.updated_at &&
-                        new Date(data.updated_at).toLocaleString()}
-                    </Td>
-                  </Tr>
-                ))}
+                {alterations?.map((data: any, index: number) => {
+                  const services = data.alteration_services.map(
+                    (item: any, i: number) => (
+                      <ListItem key={i}>
+                        {item.prices.service}:{" "}
+                        {numeral(item.prices.price).format("$0,0.00")}
+                      </ListItem>
+                    )
+                  );
+
+                  const totalUnitPrice = data.alteration_services.reduce(
+                    (acc: number, item: any) => acc + item.prices.price,
+                    0
+                  );
+
+                  const totalAmount = totalUnitPrice * data.qty;
+
+                  return (
+                    <Tr key={index} bg={data.paid ? "green.200" : ""}>
+                      <Td>
+                        <Switch
+                          defaultChecked={data.paid}
+                          onChange={async (e) => {
+                            await onPaid(data.id, e.target.checked);
+                          }}
+                        />
+                      </Td>
+                      <Td>{data.ticket_num}</Td>
+                      <Td>{data.sales_person}</Td>
+                      <Td>{data.customer_name}</Td>
+                      <Td isNumeric>{data.qty}</Td>
+                      <Td>{data.alteration_items.description}</Td>
+                      <Td>
+                        <UnorderedList>{services}</UnorderedList>
+                      </Td>
+                      <Td isNumeric>
+                        {numeral(totalUnitPrice).format("$0,0.00")}
+                      </Td>
+                      <Td isNumeric>
+                        {numeral(totalAmount).format("$0,0.00")}
+                      </Td>
+                      <Td>{data.remarks}</Td>
+                      <Td>{new Date(data.created_at).toLocaleString()}</Td>
+                      <Td>
+                        {data.updated_at &&
+                          new Date(data.updated_at).toLocaleString()}
+                      </Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </TableContainer>
@@ -448,17 +478,15 @@ export default function Admin({
                   </FormControl>
                 </Box>
 
-                {/* <Box>
-                  <FormLabel>Unit Price</FormLabel>
-                  <Text>{numeral(unitPrice).format("$0,0.00")}</Text>
+                <Box>
+                  <FormLabel>TotalUnit Price</FormLabel>
+                  <Text>{numeral(totalUnitPrice).format("$0,0.00")}</Text>
                 </Box>
 
                 <Box>
                   <FormLabel>Total Amount</FormLabel>
-                  <Text>
-                    {numeral(unitPrice * values.qty).format("$0,0.00")}
-                  </Text>
-                </Box> */}
+                  <Text>{numeral(totalAmount).format("$0,0.00")}</Text>
+                </Box>
 
                 <Box>
                   <FormControl
