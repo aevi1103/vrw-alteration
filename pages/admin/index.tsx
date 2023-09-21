@@ -45,6 +45,11 @@ import numeral from "numeral";
 import useSWR, { mutate } from "swr";
 import { fetcher } from "@/lib/utils/fetcher";
 
+type ItemOption = {
+  label: string;
+  value: string;
+};
+
 type PriceOption = {
   label: string;
   value: string;
@@ -56,14 +61,18 @@ type PriceCategoryOption = {
   options: PriceOption[];
 };
 
-export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
+export default function Admin({
+  prices,
+  items,
+}: {
+  prices: PriceCategoryOption[];
+  items: ItemOption[];
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
   const toast = useToast();
 
   const { data: alterations, isLoading } = useSWR("/api/alterations", fetcher);
-
-  console.log({ alterations, isLoading });
 
   const allPrices = useMemo(
     () => prices.flatMap((item) => item.options),
@@ -75,11 +84,20 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
     sales_person: Yup.string(),
     customer_name: Yup.string().required("Customer is required"),
     qty: Yup.number().required("Qty is required"),
-    price_id: Yup.object().shape({
+    item_id: Yup.object().shape({
       label: Yup.string().required("Item is required"),
       value: Yup.string().required("Item is required"),
-      price: Yup.number().required("Item is required"),
     }),
+    price_id: Yup.array()
+      .of(
+        Yup.object().shape({
+          label: Yup.string().required("Item is required"),
+          value: Yup.string().required("Item is required"),
+          price: Yup.number().required("Item is required"),
+        })
+      )
+      .min(1, "Must have at least one item")
+      .required("Alteration is required"),
     remarks: Yup.string().required("Remarks is required"),
     paid: Yup.boolean().default(false),
   });
@@ -90,16 +108,21 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
     values: FormValues,
     { resetForm }: FormikHelpers<FormValues>
   ) => {
-    const { error } = await supabase.from("alterations").insert({
-      created_at: new Date().toISOString(),
-      ticket_num: values.ticket_num,
-      sales_person: values.sales_person,
-      customer_name: values.customer_name,
-      qty: values.qty,
-      price_id: values.price_id.value,
-      remarks: values.remarks,
-      paid: values.paid,
-    });
+    console.log({ values });
+
+    const { data, error } = await supabase
+      .from("alterations")
+      .insert({
+        created_at: new Date().toISOString(),
+        ticket_num: values.ticket_num,
+        sales_person: values.sales_person,
+        customer_name: values.customer_name,
+        qty: values.qty,
+        item_id: values.item_id.value,
+        remarks: values.remarks,
+        paid: values.paid,
+      })
+      .select("id");
 
     if (error) {
       toast({
@@ -112,9 +135,36 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
       return;
     }
 
+    console.log({ data });
+
+    const [first] = data || [];
+    const { id = 0 } = first || {};
+
+    const alterations = values.price_id.map((item) => ({
+      created_at: new Date().toISOString(),
+      alteration_id: id,
+      price_id: item.value,
+    }));
+
+    const { error: error2 } = await supabase
+      .from("alteration_services")
+      .insert(alterations)
+      .select("id");
+
+    if (error2) {
+      toast({
+        title: "Error creating ticket.",
+        description: "There was an error creating your ticket.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
     mutate("/api/alterations");
-    resetForm();
-    onClose();
+    // resetForm();
+    // onClose();
 
     toast({
       title: "Ticket created.",
@@ -130,11 +180,11 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
     sales_person: "",
     customer_name: "",
     qty: 1,
-    price_id: {
+    item_id: {
       label: "",
       value: "",
-      price: 0,
     },
+    price_id: [],
     remarks: "",
     paid: false,
   };
@@ -155,13 +205,13 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
     validationSchema,
   });
 
-  const unitPrice = useMemo(
-    () =>
-      allPrices.find(
-        (item: PriceOption) => item.value === values.price_id.value
-      )?.price || 0,
-    [values, allPrices]
-  );
+  // const unitPrice = useMemo(
+  //   () =>
+  //     allPrices.find(
+  //       (item: PriceOption) => item.value === values.price_id.value
+  //     )?.price || 0,
+  //   [values, allPrices]
+  // );
 
   const onPaid = async (id: number, checked: boolean) => {
     console.log({ id, checked });
@@ -215,9 +265,9 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                   <Th>Sales Person</Th>
                   <Th>Customer</Th>
                   <Th isNumeric>Qty</Th>
-                  <Th>Alteration Desc.</Th>
-                  <Th isNumeric>Unit Price</Th>
-                  <Th isNumeric>Total Amount</Th>
+                  <Th>Item</Th>
+                  {/* <Th isNumeric>Unit Price</Th>
+                  <Th isNumeric>Total Amount</Th> */}
                   <Th>Remarks</Th>
                   <Th>Date Created</Th>
                   <Th>Date Updated</Th>
@@ -238,9 +288,9 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                     <Td>{data.sales_person}</Td>
                     <Td>{data.customer_name}</Td>
                     <Td isNumeric>{data.qty}</Td>
-                    <Td>{data.price.service}</Td>
-                    <Td isNumeric>${data.price.price}</Td>
-                    <Td isNumeric>${data.price.price * data.qty}</Td>
+                    <Td>{data.alteration_items.description}</Td>
+                    {/* <Td isNumeric>${data.price.price}</Td>
+                    <Td isNumeric>${data.price.price * data.qty}</Td> */}
                     <Td>{data.remarks}</Td>
                     <Td>{new Date(data.created_at).toLocaleString()}</Td>
                     <Td>
@@ -352,24 +402,53 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                 <Box>
                   <FormControl
                     isInvalid={
-                      (errors.price_id?.value &&
-                        touched.price_id?.value) as boolean
+                      (errors.item_id?.value &&
+                        touched.item_id?.value) as boolean
                     }
                   >
-                    <FormLabel htmlFor="item">Alteration</FormLabel>
-                    <Select<PriceOption, false, PriceCategoryOption>
-                      options={prices}
+                    <FormLabel htmlFor="item">Item</FormLabel>
+                    <Select
+                      options={items}
                       onBlur={handleBlur}
-                      name="price_id"
-                      value={values.price_id}
+                      name="item_id"
+                      value={values.item_id}
                       onChange={(value) => {
-                        setFieldValue("price_id", value);
+                        setFieldValue("item_id", value);
                       }}
                     />
+
+                    <FormErrorMessage>{errors.item_id?.value}</FormErrorMessage>
                   </FormControl>
                 </Box>
 
                 <Box>
+                  <FormControl
+                    isInvalid={
+                      (errors.price_id &&
+                        errors.price_id?.length > 0 &&
+                        touched.price_id) as boolean
+                    }
+                  >
+                    <FormLabel htmlFor="item">Alteration</FormLabel>
+                    <Select
+                      options={prices}
+                      onBlur={handleBlur}
+                      name="price_id"
+                      value={values.price_id}
+                      isMulti
+                      onChange={(value) => {
+                        console.log({ value });
+                        setFieldValue("price_id", value);
+                      }}
+                    />
+
+                    <FormErrorMessage>
+                      {errors.price_id as string}
+                    </FormErrorMessage>
+                  </FormControl>
+                </Box>
+
+                {/* <Box>
                   <FormLabel>Unit Price</FormLabel>
                   <Text>{numeral(unitPrice).format("$0,0.00")}</Text>
                 </Box>
@@ -379,7 +458,7 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
                   <Text>
                     {numeral(unitPrice * values.qty).format("$0,0.00")}
                   </Text>
-                </Box>
+                </Box> */}
 
                 <Box>
                   <FormControl
@@ -443,9 +522,11 @@ export default function Admin({ prices }: { prices: PriceCategoryOption[] }) {
 
 export async function getServerSideProps() {
   const prices = await getPrices();
+  const items = await getItems();
   return {
     props: {
       prices,
+      items,
     },
   };
 }
@@ -470,4 +551,17 @@ async function getPrices() {
   );
 
   return categories;
+}
+
+async function getItems() {
+  const query = supabase.from("alteration_items").select("*");
+  const items: DbResult<typeof query> = await query;
+
+  const res =
+    items.data?.map(({ id, description }: any) => ({
+      label: description,
+      value: id,
+    })) || [];
+
+  return res;
 }

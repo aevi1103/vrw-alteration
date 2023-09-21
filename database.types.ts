@@ -29,59 +29,101 @@ export interface Database {
         };
         Relationships: [];
       };
+      alteration_items: {
+        Row: {
+          created_at: string;
+          description: string;
+          id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          description: string;
+          id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          id?: string | null;
+        };
+        Relationships: [];
+      };
+      alteration_services: {
+        Row: {
+          alteration_id: number | null;
+          created_at: string;
+          id: string | null;
+          price_id: string;
+        };
+        Insert: {
+          alteration_id?: number | null;
+          created_at?: string;
+          id?: string | null;
+          price_id?: string;
+        };
+        Update: {
+          alteration_id?: number | null;
+          created_at?: string;
+          id?: string | null;
+          price_id?: string;
+        };
+        Relationships: [];
+      };
       alterations: {
         Row: {
           created_at: string;
+          created_by: string;
           customer_name: string | null;
+          customer_user_id: string | null;
           discount_percent: number | null;
           id: number;
+          item_id: string;
           paid: boolean | null;
-          price_id: string;
           qty: number;
           remarks: string | null;
           sales_person: string | null;
           ticket_num: number | null;
           updated_at: string | null;
-          user_id: string | null;
         };
         Insert: {
           created_at?: string;
+          created_by?: string;
           customer_name?: string | null;
+          customer_user_id?: string | null;
           discount_percent?: number | null;
           id?: number;
+          item_id: string;
           paid?: boolean | null;
-          price_id: string;
           qty: number;
           remarks?: string | null;
           sales_person?: string | null;
           ticket_num?: number | null;
           updated_at?: string | null;
-          user_id?: string | null;
         };
         Update: {
           created_at?: string;
+          created_by?: string;
           customer_name?: string | null;
+          customer_user_id?: string | null;
           discount_percent?: number | null;
           id?: number;
+          item_id?: string;
           paid?: boolean | null;
-          price_id?: string;
           qty?: number;
           remarks?: string | null;
           sales_person?: string | null;
           ticket_num?: number | null;
           updated_at?: string | null;
-          user_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "alterations_price_id_fkey";
-            columns: ["price_id"];
-            referencedRelation: "prices";
+            foreignKeyName: "alterations_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "users";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "alterations_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: "alterations_customer_user_id_fkey";
+            columns: ["customer_user_id"];
             referencedRelation: "users";
             referencedColumns: ["id"];
           }

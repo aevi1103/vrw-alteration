@@ -10,9 +10,15 @@ export default async function handler(
     try {
       const query = supabase
         .from("alterations")
-        .select("*, price:price_id(*)")
+        .select(
+          "*, alteration_services(price_id, alteration_id, prices(service, price)), alteration_items(description, id)"
+        )
         .order("created_at", { ascending: false });
       const result: DbResult<typeof query> = await query;
+
+      if (result.error) {
+        res.status(500).json(result.error);
+      }
 
       res.status(200).json(result.data);
     } catch (error) {
