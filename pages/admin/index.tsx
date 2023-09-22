@@ -7,7 +7,7 @@ import {
   Heading,
   Spacer,
 } from "@chakra-ui/react";
-import React, from "react";
+import React from "react";
 import AdminLayout from "@/components/admin-layout";
 import { AddIcon } from "@chakra-ui/icons";
 import supabase from "@/lib/supabase-client";
