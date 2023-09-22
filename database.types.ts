@@ -33,40 +33,62 @@ export interface Database {
         Row: {
           created_at: string;
           description: string;
-          id: string | null;
+          id: string;
         };
         Insert: {
           created_at?: string;
           description: string;
-          id?: string | null;
+          id?: string;
         };
         Update: {
           created_at?: string;
           description?: string;
-          id?: string | null;
+          id?: string;
         };
         Relationships: [];
       };
       alteration_services: {
         Row: {
-          alteration_id: number | null;
+          alteration_id: number;
           created_at: string;
-          id: string | null;
+          id: string;
+          item_id: string;
           price_id: string;
         };
         Insert: {
-          alteration_id?: number | null;
+          alteration_id: number;
           created_at?: string;
-          id?: string | null;
-          price_id?: string;
+          id?: string;
+          item_id: string;
+          price_id: string;
         };
         Update: {
-          alteration_id?: number | null;
+          alteration_id?: number;
           created_at?: string;
-          id?: string | null;
+          id?: string;
+          item_id?: string;
           price_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "alteration_services_alteration_id_fkey";
+            columns: ["alteration_id"];
+            referencedRelation: "alterations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "alteration_services_item_id_fkey";
+            columns: ["item_id"];
+            referencedRelation: "alteration_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "alteration_services_price_id_fkey";
+            columns: ["price_id"];
+            referencedRelation: "prices";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       alterations: {
         Row: {
@@ -76,7 +98,6 @@ export interface Database {
           customer_user_id: string | null;
           discount_percent: number | null;
           id: number;
-          item_id: string;
           paid: boolean | null;
           qty: number;
           remarks: string | null;
@@ -91,7 +112,6 @@ export interface Database {
           customer_user_id?: string | null;
           discount_percent?: number | null;
           id?: number;
-          item_id: string;
           paid?: boolean | null;
           qty: number;
           remarks?: string | null;
@@ -106,7 +126,6 @@ export interface Database {
           customer_user_id?: string | null;
           discount_percent?: number | null;
           id?: number;
-          item_id?: string;
           paid?: boolean | null;
           qty?: number;
           remarks?: string | null;

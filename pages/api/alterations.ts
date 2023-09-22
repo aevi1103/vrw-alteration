@@ -11,7 +11,7 @@ export default async function handler(
       const query = supabase
         .from("alterations")
         .select(
-          "*, alteration_services(price_id, alteration_id, prices(service, price)), alteration_items(description, id)"
+          "*, alteration_services(price_id, alteration_id, prices(service, price))"
         )
         .order("created_at", { ascending: false });
       const result: DbResult<typeof query> = await query;
