@@ -33,11 +33,6 @@ export const ItemsForm = ({
   const setAlterationItems = useAlterationsStore((state) => state.setItems);
   const alterationItems = useAlterationsStore((state) => state.items);
 
-  const selectedItems = useMemo(
-    () => alterationItems.map((item) => item.item.value),
-    [alterationItems]
-  );
-
   const validationSchema = Yup.object().shape({
     qty: Yup.number().required("Qty is required"),
     item_id: Yup.object().shape({
@@ -108,7 +103,7 @@ export const ItemsForm = ({
         <Heading size="sm">Add Alteration</Heading>
       </CardHeader>
       <CardBody>
-        <SimpleGrid gap={gap}>
+        <SimpleGrid columns={1} gap={gap}>
           <GridItem>
             <form
               onSubmit={handleSubmit}

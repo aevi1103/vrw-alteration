@@ -85,6 +85,9 @@ export default function AdminLayout({
                   _expanded={{ bg: "transparent", transform: "scale(1.1)" }}
                 />
                 <MenuList>
+                  <MenuItem onClick={() => router.push("/admin/create")}>
+                    Create
+                  </MenuItem>
                   <MenuItem onClick={() => router.push("/admin")}>
                     History
                   </MenuItem>
