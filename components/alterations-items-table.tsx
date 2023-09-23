@@ -94,7 +94,9 @@ export const AlterationItemsTable = () => {
             <Tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <Td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <Text maxWidth={10}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Text>
                 </Td>
               ))}
             </Tr>
