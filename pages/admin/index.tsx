@@ -10,21 +10,11 @@ import {
 import React from "react";
 import AdminLayout from "@/components/admin-layout";
 import { AddIcon } from "@chakra-ui/icons";
-import supabase from "@/lib/supabase-client";
-import { DbResult } from "@/database.types";
-import { useAlterationsStore } from "@/store/useAlterationsStore";
-import { AleterationDrawer } from "@/components/alterations-drawer";
 import { AlterationTable } from "@/components/alterations-table";
-import { ItemOption, PriceCategoryOption } from "@/lib/types/alteration";
+import { useRouter } from "next/router";
 
-export default function Admin({
-  prices,
-  items,
-}: {
-  prices: PriceCategoryOption[];
-  items: ItemOption[];
-}) {
-  const toggle = useAlterationsStore((state) => state.toggle);
+export default function Admin() {
+  const router = useRouter();
 
   return (
     <AdminLayout>
@@ -33,7 +23,11 @@ export default function Admin({
           <Flex>
             <Heading size="md">History</Heading>
             <Spacer />
-            <Button leftIcon={<AddIcon />} variant={"brand"} onClick={toggle}>
+            <Button
+              leftIcon={<AddIcon />}
+              variant={"brand"}
+              onClick={() => router.push("/admin/create")}
+            >
               Add
             </Button>
           </Flex>
@@ -43,53 +37,6 @@ export default function Admin({
           <AlterationTable />
         </CardBody>
       </Card>
-      <AleterationDrawer prices={prices} items={items} />
     </AdminLayout>
   );
-}
-
-export async function getServerSideProps() {
-  const prices = await getPrices();
-  const items = await getItems();
-  return {
-    props: {
-      prices,
-      items,
-    },
-  };
-}
-
-async function getPrices() {
-  const query = supabase
-    .from("categories")
-    .select("*, prices(id, price, service))");
-
-  const prices: DbResult<typeof query> = await query;
-  const result = prices?.data || [];
-
-  const categories: PriceCategoryOption[] = result.map(
-    ({ category, prices }: any) => ({
-      label: category,
-      options: prices.map(({ service, id, price }: any) => ({
-        label: `${service} - $${price}`,
-        value: id,
-        price,
-      })),
-    })
-  );
-
-  return categories;
-}
-
-async function getItems() {
-  const query = supabase.from("items").select("*");
-  const items: DbResult<typeof query> = await query;
-
-  const res =
-    items.data?.map(({ id, description }: any) => ({
-      label: description,
-      value: id,
-    })) || [];
-
-  return res;
 }
