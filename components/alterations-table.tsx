@@ -31,16 +31,14 @@ import { Alteration } from "@/pages/api/alterations";
 
 const columnHelper = createColumnHelper<Alteration>();
 
-export const AlterationTable = () => {
+export const AlterationTable = ({
+  alterations,
+}: {
+  alterations: Alteration[];
+}) => {
   const toast = useToast();
-  const { data: alterations } = useSWR<Alteration[]>(
-    "/api/alterations",
-    fetcher
-  );
 
   const onPaid = async (id: number, checked: boolean) => {
-    console.log({ id, checked });
-
     const { error } = await supabase
       .from("alterations")
       .update({ paid: checked, updated_at: new Date().toISOString() })
@@ -171,8 +169,6 @@ export const AlterationTable = () => {
       },
     }),
   ];
-
-  console.log({ columns });
 
   const table = useReactTable({
     data: alterations || [],

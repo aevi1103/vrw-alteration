@@ -61,8 +61,6 @@ export function ContactForm() {
 
       setIsSubmitting(false);
       setFormData(initialState);
-
-      console.log("Server response:", data);
     } else {
       // Handle error
       console.error("Error:", response.statusText);

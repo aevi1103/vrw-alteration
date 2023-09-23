@@ -65,10 +65,6 @@ export const AlterationItemsTable = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  useEffect(() => {
-    console.log(items);
-  }, [items]);
-
   return (
     <TableContainer>
       <Table variant="simple" size={"sm"}>

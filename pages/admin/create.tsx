@@ -110,8 +110,6 @@ export default function Create({
       )
       .select("*");
 
-    console.log({ insertedItems, insertedItemsError });
-
     if (insertedItemsError) {
       toast({
         title: "Error creating ticket.",

@@ -111,8 +111,6 @@ export const AleterationDrawer = ({
       )
       .select("*");
 
-    console.log({ insertedItems, insertedItemsError });
-
     if (insertedItemsError) {
       toast({
         title: "Error creating ticket.",

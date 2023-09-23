@@ -171,7 +171,6 @@ export const ItemsForm = ({
                       value={values.price_id}
                       isMulti
                       onChange={(value) => {
-                        console.log({ value });
                         setFieldValue("price_id", value);
                       }}
                     />
