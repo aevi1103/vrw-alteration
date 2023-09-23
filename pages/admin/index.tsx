@@ -12,9 +12,8 @@ import {
   Input,
   Stack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import AdminLayout from "@/components/admin-layout";
-<<<<<<< HEAD
 import { AlterationTable } from "@/components/alterations-table";
 import useSWR from "swr";
 import { Alteration } from "../api/alterations";
@@ -50,6 +49,10 @@ export default function Admin() {
     alterations || []
   );
 
+  useEffect(() => {
+    setDataSource(alterations || []);
+  }, [alterations]);
+
   const paidItems = alterations?.filter((alteration) => alteration.paid);
   const unpaidItems = alterations?.filter((alteration) => !alteration.paid);
 
@@ -72,14 +75,6 @@ export default function Admin() {
 
     setDataSource(filtered || []);
   };
-=======
-import { AddIcon } from "@chakra-ui/icons";
-import { AlterationTable } from "@/components/alterations-table";
-import { useRouter } from "next/router";
-
-export default function Admin() {
-  const router = useRouter();
->>>>>>> dfbafdffb033d24ee1d09c5dea16ad9d68da64ee
 
   return (
     <AdminLayout>
@@ -92,7 +87,6 @@ export default function Admin() {
             </Stack>
 
             <Spacer />
-<<<<<<< HEAD
             <Flex gap={5} marginBottom={3}>
               <Box>
                 <Stat>
@@ -111,15 +105,6 @@ export default function Admin() {
                 </Stat>
               </Box>
             </Flex>
-=======
-            <Button
-              leftIcon={<AddIcon />}
-              variant={"brand"}
-              onClick={() => router.push("/admin/create")}
-            >
-              Add
-            </Button>
->>>>>>> dfbafdffb033d24ee1d09c5dea16ad9d68da64ee
           </Flex>
         </CardHeader>
 
