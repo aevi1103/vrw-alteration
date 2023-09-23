@@ -1,4 +1,3 @@
-import { ItemOption, PriceCategoryOption } from "@/pages/admin";
 import { useAlterationsStore } from "@/store/useAlterationsStore";
 import {
   Drawer,
@@ -7,25 +6,28 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  Stack,
   FormControl,
   FormLabel,
   Input,
   FormErrorMessage,
-  Checkbox,
   Textarea,
   DrawerFooter,
   Button,
-  Box,
-  Text,
   useToast,
+  SimpleGrid,
+  GridItem,
+  Switch,
 } from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
 import { FormikHelpers, useFormik } from "formik";
-import numeral from "numeral";
 import React from "react";
 import * as Yup from "yup";
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
+import { ItemOption, PriceCategoryOption } from "@/lib/types/alteration";
+import { ItemsForm } from "./items-form";
+import supabase from "@/lib/supabase-client";
+
+const size = "sm";
+const gap = 3;
 
 export const AleterationDrawer = ({
   prices,
@@ -34,29 +36,18 @@ export const AleterationDrawer = ({
   prices: PriceCategoryOption[];
   items: ItemOption[];
 }) => {
+  const toast = useToast();
   const toggle = useAlterationsStore((state) => state.toggle);
   const visible = useAlterationsStore((state) => state.visible);
-  const toast = useToast();
+  const expanded = useAlterationsStore((state) => state.expanded);
+  const toggleExpanded = useAlterationsStore((state) => state.toggleExpanded);
+  const alterationItems = useAlterationsStore((state) => state.items);
+  const setAlterationItems = useAlterationsStore((state) => state.setItems);
 
   const validationSchema = Yup.object().shape({
     ticket_num: Yup.number(),
     sales_person: Yup.string(),
     customer_name: Yup.string().required("Customer is required"),
-    qty: Yup.number().required("Qty is required"),
-    item_id: Yup.object().shape({
-      label: Yup.string().required("Item is required"),
-      value: Yup.string().required("Item is required"),
-    }),
-    price_id: Yup.array()
-      .of(
-        Yup.object().shape({
-          label: Yup.string().required("Item is required"),
-          value: Yup.string().required("Item is required"),
-          price: Yup.number().required("Item is required"),
-        })
-      )
-      .min(1, "Must have at least one item")
-      .required("Alteration is required"),
     remarks: Yup.string().required("Remarks is required"),
     paid: Yup.boolean().default(false),
   });
@@ -67,61 +58,105 @@ export const AleterationDrawer = ({
     values: FormValues,
     { resetForm }: FormikHelpers<FormValues>
   ) => {
-    console.log({ values });
+    if (alterationItems.length === 0) {
+      toast({
+        title: "Error creating ticket.",
+        description: "There must be at least one alteration item.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
 
-    // const { data, error } = await supabase
-    //   .from("alterations")
-    //   .insert({
-    //     created_at: new Date().toISOString(),
-    //     ticket_num: values.ticket_num,
-    //     sales_person: values.sales_person,
-    //     customer_name: values.customer_name,
-    //     qty: values.qty,
-    //     item_id: values.item_id.value,
-    //     remarks: values.remarks,
-    //     paid: values.paid,
-    //   })
-    //   .select("id");
+    const now = new Date().toISOString();
 
-    // if (error) {
-    //   toast({
-    //     title: "Error creating ticket.",
-    //     description: "There was an error creating your ticket.",
-    //     status: "error",
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    //   return;
-    // }
+    // insert alteration
+    const { data, error } = await supabase
+      .from("alterations")
+      .insert({
+        created_at: now,
+        ticket_num: values.ticket_num,
+        sales_person: values.sales_person,
+        customer_name: values.customer_name,
+        remarks: values.remarks,
+        paid: values.paid,
+      })
+      .select("id");
 
-    // const [first] = data || [];
-    // const { id = 0 } = first || {};
+    if (error) {
+      toast({
+        title: "Error creating ticket.",
+        description: "There was an error creating your ticket.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
 
-    // const alterations = values.price_id.map((item) => ({
-    //   created_at: new Date().toISOString(),
-    //   alteration_id: id,
-    //   price_id: item.value,
-    // }));
+    const [alteration] = data || [];
+    const { id } = alteration || {};
 
-    // const { error: error2 } = await supabase
-    //   .from("alteration_services")
-    //   .insert(alterations)
-    //   .select("id");
+    const { data: insertedItems, error: insertedItemsError } = await supabase
+      .from("alteration_items")
+      .insert(
+        alterationItems.map((item) => ({
+          id: item.id,
+          alteration_id: id,
+          item_id: item.item.value,
+          qty: item.qty,
+          created_at: now,
+        }))
+      )
+      .select("*");
 
-    // if (error2) {
-    //   toast({
-    //     title: "Error creating ticket.",
-    //     description: "There was an error creating your ticket.",
-    //     status: "error",
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    //   return;
-    // }
+    console.log({ insertedItems, insertedItemsError });
+
+    if (insertedItemsError) {
+      toast({
+        title: "Error creating ticket.",
+        description: "There was an error creating items",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const services = alterationItems
+      .map((item) => {
+        const price = item.prices.map((price) => ({
+          alteration_item_id: item.id,
+          price_id: price.value,
+          created_at: now,
+        }));
+
+        return price;
+      })
+      .flat();
+
+    // insert services
+    const { error: insertedServicesError } = await supabase
+      .from("alteration_services")
+      .insert(services)
+      .select("*");
+
+    if (insertedServicesError) {
+      toast({
+        title: "Error creating ticket.",
+        description: "There was an error creating services",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
 
     mutate("/api/alterations");
-    // resetForm();
-    // onClose();
+    resetForm();
+    toggle();
+    setAlterationItems([]);
 
     toast({
       title: "Ticket created.",
@@ -136,12 +171,6 @@ export const AleterationDrawer = ({
     ticket_num: 0,
     sales_person: "",
     customer_name: "",
-    qty: 1,
-    item_id: {
-      label: "",
-      value: "",
-    },
-    price_id: [],
     remarks: "",
     paid: false,
   };
@@ -163,186 +192,140 @@ export const AleterationDrawer = ({
   });
 
   return (
-    <Drawer isOpen={visible} placement="right" onClose={toggle} size={"lg"}>
+    <Drawer
+      isOpen={visible}
+      placement="right"
+      onClose={toggle}
+      size={expanded ? "full" : "lg"}
+    >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader borderBottomWidth="1px">
-          Create a new alteration
-        </DrawerHeader>
+        <DrawerHeader borderBottomWidth="1px">Create New Record</DrawerHeader>
 
         <DrawerBody>
-          <form
-            onSubmit={handleSubmit}
-            style={{
-              width: "100%",
-            }}
-          >
-            <Stack spacing="24px">
-              <Box>
-                <FormControl
-                  isInvalid={
-                    (errors.ticket_num && touched.ticket_num) as boolean
-                  }
-                >
-                  <FormLabel htmlFor="ticket_num">Ticket #</FormLabel>
-                  <Input
-                    type="number"
-                    name="ticket_num"
-                    value={values.ticket_num}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <FormErrorMessage>{errors.ticket_num}</FormErrorMessage>
-                </FormControl>
-              </Box>
+          <SimpleGrid columns={1} gap={gap} marginTop={2}>
+            <GridItem>
+              <form
+                onSubmit={handleSubmit}
+                style={{
+                  width: "100%",
+                }}
+              >
+                <SimpleGrid columns={4} gap={gap} marginTop={5}>
+                  <GridItem>
+                    <FormControl
+                      isInvalid={
+                        (errors.ticket_num && touched.ticket_num) as boolean
+                      }
+                    >
+                      <FormLabel htmlFor="ticket_num">Ticket #</FormLabel>
+                      <Input
+                        size={size}
+                        type="number"
+                        name="ticket_num"
+                        value={values.ticket_num}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <FormErrorMessage>{errors.ticket_num}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-              <Box>
-                <FormControl
-                  isInvalid={
-                    (errors.sales_person && touched.sales_person) as boolean
-                  }
-                >
-                  <FormLabel htmlFor="sales_person">Sales Person</FormLabel>
-                  <Input
-                    name="sales_person"
-                    value={values.sales_person}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                  <GridItem colSpan={3}>
+                    <FormControl
+                      isInvalid={
+                        (errors.sales_person && touched.sales_person) as boolean
+                      }
+                    >
+                      <FormLabel htmlFor="sales_person">Sales Person</FormLabel>
+                      <Input
+                        size={size}
+                        name="sales_person"
+                        value={values.sales_person}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
-                  <FormErrorMessage>{errors.sales_person}</FormErrorMessage>
-                </FormControl>
-              </Box>
+                      <FormErrorMessage>{errors.sales_person}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-              <Box>
-                <FormControl
-                  isInvalid={
-                    (errors.customer_name && touched.customer_name) as boolean
-                  }
-                >
-                  <FormLabel htmlFor="customer_name">Customer</FormLabel>
-                  <Input
-                    name="customer_name"
-                    value={values.customer_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                  <GridItem colSpan={2}>
+                    <FormControl
+                      isInvalid={
+                        (errors.customer_name &&
+                          touched.customer_name) as boolean
+                      }
+                    >
+                      <FormLabel htmlFor="customer_name">Customer</FormLabel>
+                      <Input
+                        size={size}
+                        name="customer_name"
+                        value={values.customer_name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
-                  <FormErrorMessage>{errors.customer_name}</FormErrorMessage>
-                </FormControl>
-              </Box>
+                      <FormErrorMessage>
+                        {errors.customer_name}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-              <Box>
-                <FormControl isInvalid={(errors.qty && touched.qty) as boolean}>
-                  <FormLabel htmlFor="qty">Qty</FormLabel>
-                  <Input
-                    name="qty"
-                    value={values.qty}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    type="number"
-                    min={1}
-                  />
+                  <GridItem>
+                    <FormControl
+                      isInvalid={(errors.paid && touched.paid) as boolean}
+                    >
+                      <FormLabel htmlFor="paid">Paid</FormLabel>
 
-                  <FormErrorMessage>{errors.qty}</FormErrorMessage>
-                </FormControl>
-              </Box>
+                      <Switch
+                        name="paid"
+                        isChecked={values.paid}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <FormErrorMessage>{errors.paid}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-              <Box>
-                <FormControl
-                  isInvalid={
-                    (errors.item_id?.value && touched.item_id?.value) as boolean
-                  }
-                >
-                  <FormLabel htmlFor="item">Item</FormLabel>
-                  <Select
-                    options={items}
-                    onBlur={handleBlur}
-                    name="item_id"
-                    value={values.item_id}
-                    onChange={(value) => {
-                      setFieldValue("item_id", value);
-                    }}
-                  />
+                  <GridItem colSpan={4}>
+                    <FormControl
+                      isInvalid={(errors.remarks && touched.remarks) as boolean}
+                    >
+                      <FormLabel htmlFor="remarks">Remarks</FormLabel>
+                      <Textarea
+                        size={size}
+                        name="remarks"
+                        value={values.remarks}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
-                  <FormErrorMessage>{errors.item_id?.value}</FormErrorMessage>
-                </FormControl>
-              </Box>
+                      <FormErrorMessage>{errors.remarks}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
+                </SimpleGrid>
+              </form>
+            </GridItem>
 
-              <Box>
-                <FormControl
-                  isInvalid={
-                    (errors.price_id &&
-                      errors.price_id?.length > 0 &&
-                      touched.price_id) as boolean
-                  }
-                >
-                  <FormLabel htmlFor="item">Alteration</FormLabel>
-                  <Select
-                    options={prices}
-                    onBlur={handleBlur}
-                    name="price_id"
-                    value={values.price_id}
-                    isMulti
-                    onChange={(value) => {
-                      console.log({ value });
-                      setFieldValue("price_id", value);
-                    }}
-                  />
-
-                  <FormErrorMessage>
-                    {errors.price_id as string}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              {/* <Box>
-                <FormLabel>TotalUnit Price</FormLabel>
-                <Text>{numeral(totalUnitPrice).format("$0,0.00")}</Text>
-              </Box>
-
-              <Box>
-                <FormLabel>Total Amount</FormLabel>
-                <Text>{numeral(totalAmount).format("$0,0.00")}</Text>
-              </Box> */}
-
-              <Box>
-                <FormControl
-                  isInvalid={(errors.paid && touched.paid) as boolean}
-                >
-                  <FormLabel htmlFor="paid">Paid</FormLabel>
-                  <Checkbox
-                    name="paid"
-                    isChecked={values.paid}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <FormErrorMessage>{errors.paid}</FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              <Box>
-                <FormControl
-                  isInvalid={(errors.remarks && touched.remarks) as boolean}
-                >
-                  <FormLabel htmlFor="remarks">Remarks</FormLabel>
-                  <Textarea
-                    name="remarks"
-                    value={values.remarks}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-
-                  <FormErrorMessage>{errors.remarks}</FormErrorMessage>
-                </FormControl>
-              </Box>
-            </Stack>
-          </form>
+            <GridItem>
+              <ItemsForm prices={prices} items={items} />
+            </GridItem>
+          </SimpleGrid>
         </DrawerBody>
 
         <DrawerFooter borderTopWidth="1px">
           <Button
+            size={"sm"}
+            variant="outline"
+            onClick={toggleExpanded}
+            marginRight={2}
+          >
+            {expanded ? "Collapse" : "Expand"}
+          </Button>
+          <Button
+            size={"sm"}
             variant="outline"
             onClick={() => {
               resetForm();
@@ -353,6 +336,15 @@ export const AleterationDrawer = ({
             Cancel
           </Button>
           <Button
+            size={"sm"}
+            variant="outline"
+            onClick={() => resetForm()}
+            marginRight={2}
+          >
+            Reset
+          </Button>
+          <Button
+            size={"sm"}
             colorScheme="green"
             isLoading={isSubmitting}
             type="submit"

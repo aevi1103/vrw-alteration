@@ -31,54 +31,64 @@ export interface Database {
       };
       alteration_items: {
         Row: {
-          created_at: string;
-          description: string;
-          id: string;
-        };
-        Insert: {
-          created_at?: string;
-          description: string;
-          id?: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string;
-          id?: string;
-        };
-        Relationships: [];
-      };
-      alteration_services: {
-        Row: {
           alteration_id: number;
           created_at: string;
           id: string;
           item_id: string;
-          price_id: string;
+          qty: number;
         };
         Insert: {
           alteration_id: number;
           created_at?: string;
           id?: string;
           item_id: string;
-          price_id: string;
+          qty: number;
         };
         Update: {
           alteration_id?: number;
           created_at?: string;
           id?: string;
           item_id?: string;
-          price_id?: string;
+          qty?: number;
         };
         Relationships: [
           {
-            foreignKeyName: "alteration_services_alteration_id_fkey";
+            foreignKeyName: "alteration_items_alteration_id_fkey";
             columns: ["alteration_id"];
             referencedRelation: "alterations";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "alteration_services_item_id_fkey";
+            foreignKeyName: "alteration_items_item_id_fkey";
             columns: ["item_id"];
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      alteration_services: {
+        Row: {
+          alteration_item_id: string;
+          created_at: string;
+          id: number;
+          price_id: string;
+        };
+        Insert: {
+          alteration_item_id: string;
+          created_at?: string;
+          id?: number;
+          price_id: string;
+        };
+        Update: {
+          alteration_item_id?: string;
+          created_at?: string;
+          id?: number;
+          price_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "alteration_services_alteration_item_id_fkey";
+            columns: ["alteration_item_id"];
             referencedRelation: "alteration_items";
             referencedColumns: ["id"];
           },
@@ -94,12 +104,10 @@ export interface Database {
         Row: {
           created_at: string;
           created_by: string;
-          customer_name: string | null;
+          customer_name: string;
           customer_user_id: string | null;
-          discount_percent: number | null;
           id: number;
-          paid: boolean | null;
-          qty: number;
+          paid: boolean;
           remarks: string | null;
           sales_person: string | null;
           ticket_num: number | null;
@@ -108,12 +116,10 @@ export interface Database {
         Insert: {
           created_at?: string;
           created_by?: string;
-          customer_name?: string | null;
+          customer_name: string;
           customer_user_id?: string | null;
-          discount_percent?: number | null;
           id?: number;
-          paid?: boolean | null;
-          qty: number;
+          paid?: boolean;
           remarks?: string | null;
           sales_person?: string | null;
           ticket_num?: number | null;
@@ -122,12 +128,10 @@ export interface Database {
         Update: {
           created_at?: string;
           created_by?: string;
-          customer_name?: string | null;
+          customer_name?: string;
           customer_user_id?: string | null;
-          discount_percent?: number | null;
           id?: number;
-          paid?: boolean | null;
-          qty?: number;
+          paid?: boolean;
           remarks?: string | null;
           sales_person?: string | null;
           ticket_num?: number | null;
@@ -162,6 +166,24 @@ export interface Database {
         Update: {
           category?: string | null;
           created_at?: string;
+          id?: string;
+        };
+        Relationships: [];
+      };
+      items: {
+        Row: {
+          created_at: string;
+          description: string;
+          id: string;
+        };
+        Insert: {
+          created_at?: string;
+          description: string;
+          id?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
           id?: string;
         };
         Relationships: [];

@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@supabase/supabase-js": "^2.33.1",
+    "@tanstack/react-table": "^8.10.1",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
@@ -30,10 +31,13 @@
     "firebase-admin": "^11.10.1",
     "formik": "^2.4.5",
     "framer-motion": "^10.16.1",
+    "i": "^0.3.7",
     "lodash.groupby": "^4.6.0",
+    "lodash.sumby": "^4.6.0",
     "next": "^13.4.19",
     "next-cloudinary": "^4.21.0",
     "node-mailer": "^0.1.1",
+    "npm": "^10.1.0",
     "numeral": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -43,14 +47,17 @@
     "react-responsive-carousel": "^3.2.23",
     "swr": "^2.2.2",
     "typescript": "5.0.4",
+    "uuid": "^9.0.1",
     "yup": "^1.2.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
     "@types/lodash.groupby": "^4.6.7",
+    "@types/lodash.sumby": "^4.6.7",
     "@types/nodemailer": "^6.4.9",
     "@types/numeral": "^2.0.2",
+    "@types/uuid": "^9.0.4",
     "supabase": "^1.93.0"
   }
 }

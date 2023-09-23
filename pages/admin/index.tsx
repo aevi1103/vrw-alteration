@@ -15,22 +15,7 @@ import { DbResult } from "@/database.types";
 import { useAlterationsStore } from "@/store/useAlterationsStore";
 import { AleterationDrawer } from "@/components/alterations-drawer";
 import { AlterationTable } from "@/components/alterations-table";
-
-export type ItemOption = {
-  label: string;
-  value: string;
-};
-
-type PriceOption = {
-  label: string;
-  value: string;
-  price: number;
-};
-
-export type PriceCategoryOption = {
-  label: string;
-  options: PriceOption[];
-};
+import { ItemOption, PriceCategoryOption } from "@/lib/types/alteration";
 
 export default function Admin({
   prices,
@@ -44,7 +29,7 @@ export default function Admin({
   return (
     <AdminLayout>
       <Card>
-        <CardHeader>
+        <CardHeader paddingBottom={0}>
           <Flex>
             <Heading size="md">History</Heading>
             <Spacer />
@@ -97,7 +82,7 @@ async function getPrices() {
 }
 
 async function getItems() {
-  const query = supabase.from("alteration_items").select("*");
+  const query = supabase.from("items").select("*");
   const items: DbResult<typeof query> = await query;
 
   const res =

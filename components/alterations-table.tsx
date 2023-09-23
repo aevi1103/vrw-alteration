@@ -10,16 +10,33 @@ import {
   ListItem,
   UnorderedList,
   TableContainer,
+  Text,
+  OrderedList,
+  Flex,
+  Box,
+  Stack,
 } from "@chakra-ui/react";
 import React from "react";
 import supabase from "@/lib/supabase-client";
 import numeral from "numeral";
 import useSWR, { mutate } from "swr";
 import { fetcher } from "@/lib/utils/fetcher";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Alteration } from "@/pages/api/alterations";
+
+const columnHelper = createColumnHelper<Alteration>();
 
 export const AlterationTable = () => {
   const toast = useToast();
-  const { data: alterations } = useSWR("/api/alterations", fetcher);
+  const { data: alterations } = useSWR<Alteration[]>(
+    "/api/alterations",
+    fetcher
+  );
 
   const onPaid = async (id: number, checked: boolean) => {
     console.log({ id, checked });
@@ -50,72 +67,149 @@ export const AlterationTable = () => {
     });
   };
 
+  const columns = [
+    columnHelper.accessor("paid", {
+      header: "Item",
+      id: "item",
+      cell: (info) => (
+        <Switch
+          defaultChecked={info.getValue()}
+          onChange={() => {
+            const { id } = info.row.original;
+            onPaid(id, !info.getValue());
+          }}
+        />
+      ),
+      footer: (row) => <Text>Total</Text>,
+    }),
+    columnHelper.accessor("ticket_num", {
+      header: "Ticket #",
+      cell: (row) => <Text>{row.getValue()}</Text>,
+    }),
+    columnHelper.accessor("sales_person", {
+      header: "Sales Person",
+      cell: (row) => <Text>{row.getValue()}</Text>,
+    }),
+    columnHelper.accessor("customer_name", {
+      header: "Customer",
+      cell: (row) => <Text>{row.getValue()}</Text>,
+    }),
+    columnHelper.accessor("totalQty", {
+      header: "Total Qty",
+      cell: (info) => {
+        const total = info.row.original.alteration_items.reduce(
+          (acc, item) => acc + item.qty,
+          0
+        );
+        return <Text>{numeral(total).format("0,0")}</Text>;
+      },
+    }),
+    columnHelper.accessor("totalUnitPrice", {
+      header: "Total Unit Price",
+      cell: (info) => {
+        const unitPrices = info.row.original.alteration_items
+          .map((item) =>
+            item.alteration_services.map((service) => service.prices.price)
+          )
+          .flat();
+
+        const total = unitPrices.reduce((acc, price) => acc + price, 0);
+        return <Text>{numeral(total).format("0,0")}</Text>;
+      },
+    }),
+    columnHelper.accessor("totalAmount", {
+      header: "Total Amount",
+      cell: (info) => {
+        const unitPrices = info.row.original.alteration_items
+          .map((item) =>
+            item.alteration_services.map((service) => service.prices.price)
+          )
+          .flat();
+
+        const totalQty = info.row.original.alteration_items.reduce(
+          (acc, item) => acc + item.qty,
+          0
+        );
+
+        const total = unitPrices.reduce((acc, price) => acc + price, 0);
+        const totalAmount = total * totalQty;
+        return <Text>{numeral(totalAmount).format("$0,0.00")}</Text>;
+      },
+    }),
+    columnHelper.accessor("alteration_items", {
+      header: "Alterations",
+      cell: (row) => (
+        <OrderedList>
+          {row.getValue().map((item, i) => (
+            <ListItem key={i} marginBottom={3}>
+              <Text marginBottom={2}>
+                {item.items.description}: {item.qty}
+              </Text>
+              <UnorderedList>
+                {item.alteration_services.map((price, i) => (
+                  <ListItem key={i}>
+                    {price.prices.service}:{" "}
+                    {numeral(price.prices.price).format("$0,0.00")}
+                  </ListItem>
+                ))}
+              </UnorderedList>
+            </ListItem>
+          ))}
+        </OrderedList>
+      ),
+    }),
+    columnHelper.accessor("created_at", {
+      header: "Created At",
+      cell: (row) => <Text>{new Date(row.getValue()).toLocaleString()}</Text>,
+    }),
+    columnHelper.accessor("updated_at", {
+      header: "Updated At",
+      cell: (row) => {
+        const date = row.getValue();
+
+        return date && <Text>{new Date(date).toLocaleString()}</Text>;
+      },
+    }),
+  ];
+
+  console.log({ columns });
+
+  const table = useReactTable({
+    data: alterations || [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <TableContainer>
       <Table variant="simple" size={"sm"}>
-        <Thead>
-          <Tr>
-            <Th>Paid</Th>
-            <Th>Ticker #</Th>
-            <Th>Sales Person</Th>
-            <Th>Customer</Th>
-            <Th isNumeric>Qty</Th>
-            <Th>Item</Th>
-            <Th isNumeric>Alterations</Th>
-            <Th isNumeric>Total Unit Price</Th>
-            <Th isNumeric>Total Amount</Th>
-            <Th>Remarks</Th>
-            <Th>Date Created</Th>
-            <Th>Date Updated</Th>
-          </Tr>
+        <Thead bg={"gray.100"}>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <Th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </Th>
+              ))}
+            </Tr>
+          ))}
         </Thead>
+
         <Tbody>
-          {alterations?.map((data: any, index: number) => {
-            const services = data.alteration_services.map(
-              (item: any, i: number) => (
-                <ListItem key={i}>
-                  {item.prices.service}:{" "}
-                  {numeral(item.prices.price).format("$0,0.00")}
-                </ListItem>
-              )
-            );
-
-            const totalUnitPrice = data.alteration_services.reduce(
-              (acc: number, item: any) => acc + item.prices.price,
-              0
-            );
-
-            const totalAmount = totalUnitPrice * data.qty;
-
-            return (
-              <Tr key={index} bg={data.paid ? "green.200" : ""}>
-                <Td>
-                  <Switch
-                    defaultChecked={data.paid}
-                    onChange={async (e) => {
-                      await onPaid(data.id, e.target.checked);
-                    }}
-                  />
+          {table.getRowModel().rows.map((row) => (
+            <Tr key={row.id} bg={row.original.paid ? "green.100" : ""}>
+              {row.getVisibleCells().map((cell) => (
+                <Td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Td>
-                <Td>{data.ticket_num}</Td>
-                <Td>{data.sales_person}</Td>
-                <Td>{data.customer_name}</Td>
-                <Td isNumeric>{data.qty}</Td>
-                <Td>{data.alteration_items.description}</Td>
-                <Td>
-                  <UnorderedList>{services}</UnorderedList>
-                </Td>
-                <Td isNumeric>{numeral(totalUnitPrice).format("$0,0.00")}</Td>
-                <Td isNumeric>{numeral(totalAmount).format("$0,0.00")}</Td>
-                <Td>{data.remarks}</Td>
-                <Td>{new Date(data.created_at).toLocaleString()}</Td>
-                <Td>
-                  {data.updated_at &&
-                    new Date(data.updated_at).toLocaleString()}
-                </Td>
-              </Tr>
-            );
-          })}
+              ))}
+            </Tr>
+          ))}
         </Tbody>
       </Table>
     </TableContainer>
