@@ -54,25 +54,29 @@ export default function UpPaid() {
     <Card>
       <CardHeader>
         <Flex gap={2} alignItems={"center"}>
-          <Heading size="md">
-            {paid === "true" ? "Paid" : paid === "false" ? "Unpaid" : "All"}{" "}
-            Report
-          </Heading>
-          <RadioGroup
-            size={"sm"}
-            onChange={(val) =>
-              router.push({
-                pathname: router.pathname,
-                query: { paid: val },
-              })
-            }
-          >
-            <Stack direction="row">
-              <Radio value="true">Paid</Radio>
-              <Radio value="false">Unpaid</Radio>
-              <Radio value="">All</Radio>
-            </Stack>
-          </RadioGroup>
+          <Box>
+            <Heading size="md">
+              {paid === "true" ? "Paid" : paid === "false" ? "Unpaid" : "All"}{" "}
+              Report
+            </Heading>
+          </Box>
+          <Box>
+            <RadioGroup
+              size={"sm"}
+              onChange={(val) =>
+                router.push({
+                  pathname: router.pathname,
+                  query: { paid: val },
+                })
+              }
+            >
+              <Stack direction="row">
+                <Radio value="true">Paid</Radio>
+                <Radio value="false">Unpaid</Radio>
+                <Radio value="">All</Radio>
+              </Stack>
+            </RadioGroup>
+          </Box>
         </Flex>
       </CardHeader>
 
@@ -114,7 +118,7 @@ export default function UpPaid() {
 
             return (
               <Flex key={alteration.id} gap={5}>
-                <Box>
+                <Box width={qrCodeSize}>
                   <Center>
                     <QRCode
                       onClick={() =>
@@ -132,7 +136,8 @@ export default function UpPaid() {
                     />
                   </Center>
                 </Box>
-                <Box>
+
+                <Box width={"100%"}>
                   <Heading size="xs" textTransform="uppercase" marginBottom={2}>
                     <Flex>
                       <Text
