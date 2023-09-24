@@ -47,7 +47,11 @@ export default function UpPaid() {
     }
 
     const origin = window?.location?.origin;
-    return `${origin}${router.basePath}/alteration/${uuid}}`;
+    const res = `${origin}${router.basePath}/alteration/${uuid}`;
+
+    console.log(res);
+
+    return res;
   };
 
   return (
