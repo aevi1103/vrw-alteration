@@ -1,7 +1,4 @@
 import {
-  Card,
-  CardBody,
-  CardHeader,
   Flex,
   Heading,
   Spacer,
@@ -12,6 +9,7 @@ import {
   Input,
   Stack,
   SimpleGrid,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import AdminLayout from "@/components/admin-layout";
@@ -47,6 +45,8 @@ export default function Admin() {
     fetcher
   );
 
+  const [isLarge] = useMediaQuery("(min-width: 768px)");
+
   const [dataSource, setDataSource] = React.useState<Alteration[]>(
     alterations || []
   );
@@ -80,12 +80,14 @@ export default function Admin() {
 
   return (
     <AdminLayout>
-      <SimpleGrid columns={1} gap={2}>
+      <SimpleGrid columns={1} gap={3}>
         <Box>
-          <Flex>
+          <Flex alignItems={"center"}>
             <Stack>
-              <Heading size="md">History</Heading>
-              <Input size={"sm"} placeholder="Search" onChange={onSearch} />
+              <Heading size={isLarge ? "md" : "xl"}>History</Heading>
+              {isLarge && (
+                <Input size={"sm"} placeholder="Search" onChange={onSearch} />
+              )}
             </Stack>
 
             <Spacer />
@@ -109,6 +111,12 @@ export default function Admin() {
             </Flex>
           </Flex>
         </Box>
+
+        {!isLarge && (
+          <Box>
+            <Input size={"sm"} placeholder="Search" onChange={onSearch} />
+          </Box>
+        )}
 
         <Box>
           <AlterationTable alterations={dataSource} />

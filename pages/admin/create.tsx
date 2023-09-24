@@ -1,10 +1,6 @@
 import supabase from "@/lib/supabase-client";
 import { useAlterationsStore } from "@/store/useAlterationsStore";
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
   Heading,
   FormControl,
   FormErrorMessage,

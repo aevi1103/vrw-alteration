@@ -8,7 +8,11 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const data = await getAlterations();
+      const { paid } = req.query;
+
+      const data = await getAlterations({
+        paid: paid === "true" ? true : paid === "false" ? false : undefined,
+      });
 
       res.status(200).json(data);
     } catch (error) {
@@ -22,7 +26,7 @@ export default async function handler(
   res.status(405).end(); // Method Not Allowed
 }
 
-async function getAlterations() {
+async function getAlterations({ paid }: { paid?: boolean }) {
   const query = supabase
     .from("alterations")
     .select(
@@ -34,6 +38,10 @@ async function getAlterations() {
           )`
     )
     .order("created_at", { ascending: false });
+
+  if (paid !== undefined) {
+    query.eq("paid", paid);
+  }
 
   const result: DbResult<typeof query> = await query;
 
