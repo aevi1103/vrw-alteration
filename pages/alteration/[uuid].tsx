@@ -5,18 +5,23 @@ import { Alteration } from "../api/alterations";
 import { DbResult } from "@/database.types";
 import {
   Box,
+  Button,
   Card,
   CardBody,
   CardHeader,
   Container,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   Spacer,
   Stack,
   StackDivider,
+  Switch,
   Text,
   VStack,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumby from "lodash.sumby";
@@ -24,6 +29,7 @@ import Image from "next/image";
 import QRCode from "react-qr-code";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const getServerSideProps = (async (context) => {
   const { uuid } = context.params as { uuid: string };
@@ -64,8 +70,12 @@ export const getServerSideProps = (async (context) => {
 export default function Alteration({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const toast = useToast();
+  const { role } = useAuth();
   const router = useRouter();
   const [isLarge] = useMediaQuery("(min-width: 768px)");
+
+  const [isPaid, setIsPaid] = React.useState(data.paid);
 
   const amounts = data.alteration_items.map((item) => {
     const qty = item.qty;
@@ -92,6 +102,34 @@ export default function Alteration({
 
   const qrCodeSize = isLarge ? 150 : 120;
 
+  const onPaid = async (id: number, checked: boolean) => {
+    const { error } = await supabase
+      .from("alterations")
+      .update({ paid: checked, updated_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Error updating ticket.",
+        description: "There was an error updating your ticket.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsPaid(checked);
+
+    toast({
+      title: "Ticket updated.",
+      description: "We've updated your ticket.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Container marginTop={4}>
       <Card>
@@ -116,11 +154,11 @@ export default function Alteration({
             </Box>
 
             <Heading
-              color={data?.paid ? "green.500" : "red.500"}
+              color={isPaid ? "green.500" : "red.500"}
               marginBottom={4}
               size={"sm"}
             >
-              {data.paid ? "PAID" : "UNPAID"}
+              {isPaid ? "PAID" : "UNPAID"}
             </Heading>
           </VStack>
           <Flex>
@@ -156,7 +194,7 @@ export default function Alteration({
               </Box>
             ))}
 
-            <Box color={data?.paid ? "green.500" : "red.500"}>
+            <Box color={isPaid ? "green.500" : "red.500"}>
               <Flex>
                 <Heading size="md">Total Amount</Heading>
                 <Spacer />
@@ -179,6 +217,34 @@ export default function Alteration({
               <Text>{new Date(data.created_at).toLocaleString()}</Text>
             </Flex>
           </Box>
+
+          {data.updated_at && (
+            <Box marginTop={3}>
+              <Flex
+                fontStyle={"italic"}
+                fontWeight={"normal"}
+                fontSize={12}
+                color={"gray.400"}
+              >
+                <Text>Date Updated</Text>
+                <Spacer />
+                <Text>{new Date(data.updated_at).toLocaleString()}</Text>
+              </Flex>
+            </Box>
+          )}
+
+          {role === "admin" && (
+            <FormControl display="flex" alignItems="center" marginTop={5}>
+              <FormLabel htmlFor="paid" mb="0">
+                Paid?
+              </FormLabel>
+              <Switch
+                id="paid"
+                defaultChecked={isPaid}
+                onChange={(e) => onPaid(data.id, e.target.checked)}
+              />
+            </FormControl>
+          )}
         </CardBody>
       </Card>
     </Container>
