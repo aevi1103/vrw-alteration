@@ -39,7 +39,6 @@ export default function Create({
 }) {
   const router = useRouter();
   const toast = useToast();
-  const toggle = useAlterationsStore((state) => state.toggle);
   const alterationItems = useAlterationsStore((state) => state.items);
   const setAlterationItems = useAlterationsStore((state) => state.setItems);
 
@@ -154,10 +153,7 @@ export default function Create({
 
     mutate("/api/alterations");
     resetForm();
-    toggle();
     setAlterationItems([]);
-
-    router.push("/admin");
 
     toast({
       title: "Ticket created.",
@@ -339,8 +335,7 @@ export default function Create({
             size={"sm"}
             variant="outline"
             onClick={() => {
-              resetForm();
-              toggle();
+              router.push("/admin");
             }}
             marginRight={2}
           >
