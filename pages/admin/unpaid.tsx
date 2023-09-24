@@ -32,8 +32,10 @@ export default function UpPaid() {
     fetcher
   );
 
+  const paidItems = alterations?.filter((alteration) => alteration.paid);
   const unpaidItems = alterations?.filter((alteration) => !alteration.paid);
   const total = getTotalAmount(unpaidItems || []);
+  const totalPaid = getTotalAmount(paidItems || []);
 
   return (
     <Card>
@@ -64,12 +66,20 @@ export default function UpPaid() {
       <CardBody paddingTop={0}>
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
-            <Stat>
-              <StatLabel>Total</StatLabel>
-              <StatNumber color={"red.500"}>
-                {numeral(total).format("$0,0.00")}
-              </StatNumber>
-            </Stat>
+            <Flex>
+              <Stat>
+                <StatLabel>Total Updaid</StatLabel>
+                <StatNumber color={"red.500"}>
+                  {numeral(total).format("$0,0.00")}
+                </StatNumber>
+              </Stat>
+              <Stat>
+                <StatLabel>Total Paid</StatLabel>
+                <StatNumber color={"green.500"}>
+                  {numeral(totalPaid).format("$0,0.00")}
+                </StatNumber>
+              </Stat>
+            </Flex>
           </Box>
 
           {alterations?.map((alteration) => {
