@@ -97,28 +97,34 @@ export default function UpPaid() {
 
             return (
               <Box key={alteration.id}>
-                <Heading size="md" textTransform="uppercase" marginBottom={2}>
+                <Heading size="xs" textTransform="uppercase" marginBottom={2}>
                   <Flex>
-                    <Text color={alteration.paid ? "green.500" : ""}>
+                    <Text
+                      size={"sm"}
+                      color={alteration.paid ? "green.500" : ""}
+                    >
                       {alteration.customer_name} {alteration.paid && "- PAID"}
                     </Text>
                     <Spacer />
-                    <Text fontStyle={"italic"}> {alteration.ticket_num}</Text>
+                    <Text size={"sm"} fontStyle={"italic"}>
+                      {" "}
+                      {alteration.ticket_num}
+                    </Text>
                   </Flex>
                 </Heading>
 
                 {
                   <Stack spacing="2">
                     {alteration.alteration_items.map((item, i) => (
-                      <Box key={i} marginBottom={3}>
-                        <Text fontWeight={"semibold"}>
+                      <Box key={i}>
+                        <Text fontSize={13} fontWeight={"semibold"}>
                           {item.items.description}: {item.qty} pc(s)
                         </Text>
                         <Box marginLeft={2}>
                           {item.alteration_services.map((service) => (
                             <Text
                               key={service.prices.service}
-                              fontSize={13}
+                              fontSize={12}
                               fontStyle={"italic"}
                             >
                               {service.prices.service} -{" "}
@@ -130,6 +136,7 @@ export default function UpPaid() {
                     ))}
 
                     <Text
+                      size={"sm"}
                       color={alteration.paid ? "green.500" : "red.500"}
                       fontWeight={"semibold"}
                     >
