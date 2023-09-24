@@ -92,7 +92,7 @@ export default function Alteration({
   const qrCodeSize = isLarge ? 150 : 120;
 
   return (
-    <Container marginTop={10}>
+    <Container marginTop={4}>
       <Card>
         <CardHeader>
           <VStack>
