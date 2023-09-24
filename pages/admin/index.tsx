@@ -10,6 +10,7 @@ import {
   Stack,
   SimpleGrid,
   useMediaQuery,
+  Spinner,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import AdminLayout from "@/components/admin-layout";
@@ -40,7 +41,7 @@ export const getTotalAmount = (alterations: Alteration[]) => {
 };
 
 export default function Admin() {
-  const { data: alterations } = useSWR<Alteration[]>(
+  const { data: alterations, isLoading } = useSWR<Alteration[]>(
     "/api/alterations",
     fetcher
   );
@@ -119,7 +120,11 @@ export default function Admin() {
         )}
 
         <Box>
-          <AlterationTable alterations={dataSource} />
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <AlterationTable alterations={dataSource} />
+          )}
         </Box>
       </SimpleGrid>
     </AdminLayout>
