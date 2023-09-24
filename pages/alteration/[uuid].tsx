@@ -1,6 +1,6 @@
 import supabase from "@/lib/supabase-client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import { Alteration } from "../api/alterations";
 import { DbResult } from "@/database.types";
 import {
@@ -63,7 +63,6 @@ export default function Alteration({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
-  const domainUrl = router.asPath;
 
   const amounts = data.alteration_items.map((item) => {
     const qty = item.qty;
@@ -76,8 +75,18 @@ export default function Alteration({
   });
   const totalAmount = sumby(amounts);
 
-  const origin = window?.location?.origin;
-  const url = `${origin}${router.basePath}/alteration/${data.uuid}}`;
+  const [url, setUrl] = React.useState("");
+
+  useEffect(() => {
+    if (!window) {
+      return;
+    }
+
+    const origin = window?.location?.origin;
+    const res = `${origin}${router.basePath}/alteration/${data.uuid}}`;
+    setUrl(res);
+  }, [router, data]);
+
   const qrCodeSize = 150;
 
   return (

@@ -39,11 +39,16 @@ export default function UpPaid() {
   const total = getTotalAmount(unpaidItems || []);
   const totalPaid = getTotalAmount(paidItems || []);
 
-  const origin = window?.location?.origin;
   const qrCodeSize = 90;
 
-  const getUrl = (uuid: string) =>
-    `${origin}${router.basePath}/alteration/${uuid}}`;
+  const getUrl = (uuid: string) => {
+    if (!window) {
+      return "";
+    }
+
+    const origin = window?.location?.origin;
+    return `${origin}${router.basePath}/alteration/${uuid}}`;
+  };
 
   return (
     <Card>
