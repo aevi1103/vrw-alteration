@@ -20,7 +20,7 @@ import { fetcher } from "@/lib/utils/fetcher";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
 
-const getTotalAmount = (alterations: Alteration[]) => {
+export const getTotalAmount = (alterations: Alteration[]) => {
   const itemsAmount = alterations.map((alteration) => {
     const items = alteration.alteration_items.map((item) => {
       const qty = item.qty;

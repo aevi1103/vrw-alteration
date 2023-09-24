@@ -12,15 +12,21 @@ import {
   StackDivider,
   Box,
   Text,
+  Stat,
+  StatLabel,
+  StatNumber,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
+import { getTotalAmount } from ".";
 
 export default function UpPaid() {
   const { data: alterations } = useSWR<Alteration[]>(
     "/api/alterations?paid=false",
     fetcher
   );
+
+  const total = getTotalAmount(alterations || []);
 
   return (
     <Card>
@@ -30,6 +36,15 @@ export default function UpPaid() {
 
       <CardBody>
         <Stack divider={<StackDivider />} spacing="4">
+          <Box>
+            <Stat>
+              <StatLabel>Total</StatLabel>
+              <StatNumber color={"red.500"}>
+                {numeral(total).format("$0,0.00")}
+              </StatNumber>
+            </Stat>
+          </Box>
+
           {alterations?.map((alteration) => {
             const amounts = alteration.alteration_items.map((item) => {
               const qty = item.qty;
