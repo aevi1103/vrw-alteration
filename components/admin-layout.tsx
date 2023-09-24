@@ -32,7 +32,7 @@ export default function AdminLayout({
         templateColumns="repeat(4, 1fr)"
         templateRows={"max-content 1fr"}
         gap={2}
-        backgroundColor={"gray.50"}
+        // backgroundColor={"gray.50"}
         minHeight={"100vh"}
         maxHeight={"max-content"}
       >
@@ -53,22 +53,6 @@ export default function AdminLayout({
               width={180}
             />
             <Spacer />
-            {/* <Box>
-              <Menu>
-                <MenuButton
-                  px={4}
-                  py={2}
-                  transition="all 0.2s"
-                  borderRadius="md"
-                >
-                  Hi {name}!
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={signOut}>Logout</MenuItem>
-                  <MenuItem onClick={() => router.push("/")}>Home</MenuItem>
-                </MenuList>
-              </Menu>
-            </Box> */}
             <Box>
               <Menu>
                 <MenuButton
