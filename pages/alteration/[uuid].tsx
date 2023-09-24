@@ -23,6 +23,7 @@ import sumby from "lodash.sumby";
 import Image from "next/image";
 import QRCode from "react-qr-code";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export const getServerSideProps = (async (context) => {
   const { uuid } = context.params as { uuid: string };
@@ -97,15 +98,17 @@ export default function Alteration({
         <CardHeader>
           <VStack>
             <Box marginBottom={4}>
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                style={{
-                  objectFit: "contain",
-                }}
-                height={200}
-                width={200}
-              />
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  style={{
+                    objectFit: "contain",
+                  }}
+                  height={200}
+                  width={200}
+                />
+              </Link>
             </Box>
 
             <Box>
