@@ -72,6 +72,9 @@ export default function Alteration({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const toast = useToast();
   const { role } = useAuth();
+
+  const isAdmin = role === "admin";
+
   const router = useRouter();
   const [isLarge] = useMediaQuery("(min-width: 768px)");
 
@@ -218,7 +221,7 @@ export default function Alteration({
             </Flex>
           </Box>
 
-          {data.updated_at && (
+          {data.updated_at && isAdmin && (
             <Box marginTop={3}>
               <Flex
                 fontStyle={"italic"}
@@ -233,7 +236,7 @@ export default function Alteration({
             </Box>
           )}
 
-          {role === "admin" && (
+          {isAdmin && (
             <FormControl display="flex" alignItems="center" marginTop={5}>
               <FormLabel htmlFor="paid" mb="0">
                 Paid?
