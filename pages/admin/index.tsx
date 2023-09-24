@@ -11,6 +11,7 @@ import {
   Box,
   Input,
   Stack,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import AdminLayout from "@/components/admin-layout";
@@ -79,8 +80,8 @@ export default function Admin() {
 
   return (
     <AdminLayout>
-      <Card>
-        <CardHeader paddingBottom={0}>
+      <SimpleGrid columns={1} gap={2}>
+        <Box>
           <Flex>
             <Stack>
               <Heading size="md">History</Heading>
@@ -107,12 +108,12 @@ export default function Admin() {
               </Box>
             </Flex>
           </Flex>
-        </CardHeader>
+        </Box>
 
-        <CardBody paddingTop={2}>
+        <Box>
           <AlterationTable alterations={dataSource} />
-        </CardBody>
-      </Card>
+        </Box>
+      </SimpleGrid>
     </AdminLayout>
   );
 }

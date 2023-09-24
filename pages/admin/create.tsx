@@ -16,6 +16,7 @@ import {
   Textarea,
   useToast,
   Button,
+  Box,
 } from "@chakra-ui/react";
 import { FormikHelpers, useFormik } from "formik";
 import React from "react";
@@ -190,12 +191,12 @@ export default function Create({
 
   return (
     <AdminLayout>
-      <Card>
-        <CardHeader paddingBottom={0}>
+      <SimpleGrid columns={1} gap={3}>
+        <Box>
           <Heading size="md">Create New Alteration</Heading>
-        </CardHeader>
+        </Box>
 
-        <CardBody paddingTop={0}>
+        <Box>
           <SimpleGrid columns={1} gap={gap}>
             <GridItem>
               <form
@@ -204,7 +205,7 @@ export default function Create({
                   width: "100%",
                 }}
               >
-                <SimpleGrid gap={gap} marginTop={5}>
+                <SimpleGrid gap={gap}>
                   <GridItem>
                     <FormControl
                       isInvalid={
@@ -305,9 +306,9 @@ export default function Create({
               <ItemsForm prices={prices} items={items} />
             </GridItem>
           </SimpleGrid>
-        </CardBody>
+        </Box>
 
-        <CardFooter borderTopWidth="1px">
+        <Box>
           <Button
             size={"sm"}
             colorScheme="green"
@@ -341,8 +342,8 @@ export default function Create({
           >
             Cancel
           </Button>
-        </CardFooter>
-      </Card>
+        </Box>
+      </SimpleGrid>
     </AdminLayout>
   );
 }

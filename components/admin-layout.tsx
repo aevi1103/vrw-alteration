@@ -53,15 +53,13 @@ export default function AdminLayout({
               width={180}
             />
             <Spacer />
-            <Box>
+            {/* <Box>
               <Menu>
                 <MenuButton
                   px={4}
                   py={2}
                   transition="all 0.2s"
                   borderRadius="md"
-                  // _hover={{ bg: "brand.secondary", color: "white" }}
-                  // _expanded={{ bg: "brand.secondary", color: "white" }}
                 >
                   Hi {name}!
                 </MenuButton>
@@ -70,7 +68,7 @@ export default function AdminLayout({
                   <MenuItem onClick={() => router.push("/")}>Home</MenuItem>
                 </MenuList>
               </Menu>
-            </Box>
+            </Box> */}
             <Box>
               <Menu>
                 <MenuButton
@@ -85,6 +83,7 @@ export default function AdminLayout({
                   _expanded={{ bg: "transparent", transform: "scale(1.1)" }}
                 />
                 <MenuList>
+                  <MenuItem>Hi {name}!</MenuItem>
                   <MenuItem onClick={() => router.push("/admin/create")}>
                     Create
                   </MenuItem>
@@ -103,6 +102,7 @@ export default function AdminLayout({
                   <MenuItem onClick={() => router.push("/admin/about")}>
                     About
                   </MenuItem>
+                  <MenuItem onClick={signOut}>Logout</MenuItem>
                 </MenuList>
               </Menu>
             </Box>

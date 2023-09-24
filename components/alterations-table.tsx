@@ -81,12 +81,12 @@ export const AlterationTable = ({
       header: "Ticket #",
       cell: (row) => <Text>{row.getValue()}</Text>,
     }),
-    columnHelper.accessor("sales_person", {
-      header: "Sales Person",
-      cell: (row) => <Text>{row.getValue()}</Text>,
-    }),
     columnHelper.accessor("customer_name", {
       header: "Customer",
+      cell: (row) => <Text>{row.getValue()}</Text>,
+    }),
+    columnHelper.accessor("sales_person", {
+      header: "Sales Person",
       cell: (row) => <Text>{row.getValue()}</Text>,
     }),
     columnHelper.accessor("totalQty", {
