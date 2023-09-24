@@ -89,7 +89,7 @@ export default function Alteration({
     setUrl(res);
   }, [router, data]);
 
-  const qrCodeSize = isLarge ? 150 : 80;
+  const qrCodeSize = isLarge ? 150 : 120;
 
   return (
     <Container marginTop={10}>
