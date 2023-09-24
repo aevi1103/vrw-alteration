@@ -16,14 +16,19 @@ import {
   StatNumber,
   Flex,
   Spacer,
+  Radio,
+  RadioGroup,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
 import { getTotalAmount } from ".";
+import { useRouter } from "next/router";
 
 export default function UpPaid() {
+  const router = useRouter();
+  const { paid } = router.query;
   const { data: alterations } = useSWR<Alteration[]>(
-    "/api/alterations",
+    `/api/alterations?paid=${paid}`,
     fetcher
   );
 
@@ -33,7 +38,27 @@ export default function UpPaid() {
   return (
     <Card>
       <CardHeader>
-        <Heading size="md">Unpaid Report</Heading>
+        <Flex gap={2} alignItems={"center"}>
+          <Heading size="md">
+            {paid === "true" ? "Paid" : paid === "false" ? "Unpaid" : "All"}{" "}
+            Report
+          </Heading>
+          <RadioGroup
+            size={"sm"}
+            onChange={(val) =>
+              router.push({
+                pathname: router.pathname,
+                query: { paid: val },
+              })
+            }
+          >
+            <Stack direction="row">
+              <Radio value="true">Paid</Radio>
+              <Radio value="false">Unpaid</Radio>
+              <Radio value="">All</Radio>
+            </Stack>
+          </RadioGroup>
+        </Flex>
       </CardHeader>
 
       <CardBody paddingTop={0}>
