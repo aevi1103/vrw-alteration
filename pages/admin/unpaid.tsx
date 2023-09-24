@@ -69,7 +69,7 @@ export default function UpPaid() {
             <Flex gap={5}>
               <Box>
                 <Stat>
-                  <StatLabel>Total Updaid</StatLabel>
+                  <StatLabel>Total Unpaid</StatLabel>
                   <StatNumber color={"red.500"}>
                     {numeral(total).format("$0,0.00")}
                   </StatNumber>
