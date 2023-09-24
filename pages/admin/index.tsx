@@ -19,24 +19,25 @@ import useSWR from "swr";
 import { Alteration } from "../api/alterations";
 import { fetcher } from "@/lib/utils/fetcher";
 import numeral from "numeral";
+import sumBy from "lodash.sumby";
 
 const getTotalAmount = (alterations: Alteration[]) => {
-  const qtys = alterations
-    .map((alteration) => alteration.alteration_items.map((item) => item.qty))
-    .flat();
-  const prices = alterations
-    .map((alteration) =>
-      alteration.alteration_items
-        .map((item) => item.alteration_services.map((p) => p.prices.price))
-        .flat()
-    )
-    .flat();
+  const itemsAmount = alterations.map((alteration) => {
+    const items = alteration.alteration_items.map((item) => {
+      const qty = item.qty;
+      const totalUnitPrice = sumBy(
+        item.alteration_services,
+        (p) => p.prices.price
+      );
+      const totalAmount = totalUnitPrice * qty;
+      return totalAmount;
+    });
 
-  const totalQty = qtys.reduce((a, b) => a + b, 0);
-  const total = prices.reduce((a, b) => a + b, 0);
-  const totalAmount = total * totalQty;
+    const totalAmount = sumBy(items);
+    return totalAmount;
+  });
 
-  return totalAmount;
+  return sumBy(itemsAmount);
 };
 
 export default function Admin() {
@@ -92,7 +93,7 @@ export default function Admin() {
                 <Stat>
                   <StatLabel>Total Paid</StatLabel>
                   <StatNumber color={"green.500"}>
-                    {numeral(paidAmount).format("$0,0.0")}
+                    {numeral(paidAmount).format("$0,0.00")}
                   </StatNumber>
                 </Stat>
               </Box>
@@ -100,7 +101,7 @@ export default function Admin() {
                 <Stat>
                   <StatLabel>Total Un-Paid</StatLabel>
                   <StatNumber color={"red.500"}>
-                    {numeral(unpaidAmount).format("$0,0.0")}
+                    {numeral(unpaidAmount).format("$0,0.00")}
                   </StatNumber>
                 </Stat>
               </Box>

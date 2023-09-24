@@ -29,9 +29,16 @@ export const AlterationItemsTable = () => {
   // const table = useReactTable();
   const items = useAlterationsStore((state) => state.items);
 
-  const totalQty = sumby(items, "qty");
   const totalUnitPrice = sumby(items, (item) => sumby(item.prices, "price"));
-  const totalAmount = totalUnitPrice * totalQty;
+  const totalQty = sumby(items, "qty");
+
+  const itemsAmount = items.map((item) => {
+    const qty = item.qty;
+    const totalUnitPrice = sumby(item.prices, "price");
+    const totalAmount = totalUnitPrice * qty;
+    return totalAmount;
+  });
+  const totalAmount = sumby(itemsAmount);
 
   const columns = [
     columnHelper.accessor("item.label", {

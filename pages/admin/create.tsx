@@ -47,7 +47,9 @@ export default function Create({
     ticket_num: Yup.number(),
     sales_person: Yup.string(),
     customer_name: Yup.string().required("Customer is required"),
-    remarks: Yup.string().required("Remarks is required"),
+    remarks: Yup.string().when("paid", ([paid], schema) =>
+      !paid ? schema.required("Remarks is required") : schema
+    ),
     paid: Yup.boolean().default(false),
   });
 
@@ -324,7 +326,10 @@ export default function Create({
           <Button
             size={"sm"}
             variant="outline"
-            onClick={() => resetForm()}
+            onClick={() => {
+              resetForm();
+              setAlterationItems([]);
+            }}
             marginRight={2}
           >
             Reset

@@ -12,15 +12,11 @@ import {
   TableContainer,
   Text,
   OrderedList,
-  Flex,
-  Box,
-  Stack,
 } from "@chakra-ui/react";
 import React from "react";
 import supabase from "@/lib/supabase-client";
 import numeral from "numeral";
-import useSWR, { mutate } from "swr";
-import { fetcher } from "@/lib/utils/fetcher";
+import { mutate } from "swr";
 import {
   createColumnHelper,
   flexRender,
@@ -28,6 +24,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Alteration } from "@/pages/api/alterations";
+import sumby from "lodash.sumby";
 
 const columnHelper = createColumnHelper<Alteration>();
 
@@ -118,19 +115,17 @@ export const AlterationTable = ({
     columnHelper.accessor("totalAmount", {
       header: "Total Amount",
       cell: (info) => {
-        const unitPrices = info.row.original.alteration_items
-          .map((item) =>
-            item.alteration_services.map((service) => service.prices.price)
-          )
-          .flat();
+        const amounts = info.row.original.alteration_items.map((item) => {
+          const qty = item.qty;
+          const totalUnitPrice = sumby(
+            item.alteration_services,
+            (p) => p.prices.price
+          );
+          const totalAmount = totalUnitPrice * qty;
+          return totalAmount;
+        });
 
-        const totalQty = info.row.original.alteration_items.reduce(
-          (acc, item) => acc + item.qty,
-          0
-        );
-
-        const total = unitPrices.reduce((acc, price) => acc + price, 0);
-        const totalAmount = total * totalQty;
+        const totalAmount = sumby(amounts);
         return <Text>{numeral(totalAmount).format("$0,0.00")}</Text>;
       },
     }),
