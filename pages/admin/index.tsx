@@ -91,7 +91,7 @@ export default function Admin() {
             <Flex gap={5} marginBottom={3}>
               <Box>
                 <Stat>
-                  <StatLabel>Total Paid</StatLabel>
+                  <StatLabel>Paid</StatLabel>
                   <StatNumber color={"green.500"}>
                     {numeral(paidAmount).format("$0,0.00")}
                   </StatNumber>
@@ -99,7 +99,7 @@ export default function Admin() {
               </Box>
               <Box>
                 <Stat>
-                  <StatLabel>Total Un-Paid</StatLabel>
+                  <StatLabel>Un-Paid</StatLabel>
                   <StatNumber color={"red.500"}>
                     {numeral(unpaidAmount).format("$0,0.00")}
                   </StatNumber>
