@@ -109,16 +109,7 @@ export default function Alteration({
             </Box>
 
             <Box>
-              <QRCode
-                size={qrCodeSize}
-                style={{
-                  height: "auto",
-                  maxWidth: "100%",
-                  width: "100%",
-                }}
-                value={url}
-                viewBox={`0 0 ${qrCodeSize} ${qrCodeSize}`}
-              />
+              <QRCode size={qrCodeSize} value={url} />
             </Box>
 
             <Heading
