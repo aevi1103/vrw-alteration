@@ -44,6 +44,7 @@
     "react-google-button": "^0.7.2",
     "react-icons": "^4.10.1",
     "react-photoswipe-gallery": "^2.2.7",
+    "react-qr-code": "^2.0.12",
     "react-responsive-carousel": "^3.2.23",
     "swr": "^2.2.2",
     "typescript": "5.0.4",

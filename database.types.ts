@@ -112,6 +112,7 @@ export interface Database {
           sales_person: string | null;
           ticket_num: number | null;
           updated_at: string | null;
+          uuid: string;
         };
         Insert: {
           created_at?: string;
@@ -124,6 +125,7 @@ export interface Database {
           sales_person?: string | null;
           ticket_num?: number | null;
           updated_at?: string | null;
+          uuid?: string;
         };
         Update: {
           created_at?: string;
@@ -136,6 +138,7 @@ export interface Database {
           sales_person?: string | null;
           ticket_num?: number | null;
           updated_at?: string | null;
+          uuid?: string;
         };
         Relationships: [
           {
@@ -283,7 +286,6 @@ export interface Database {
     };
   };
 }
-
 export type DbResult<T> = T extends PromiseLike<infer U> ? U : never;
 export type DbResultOk<T> = T extends PromiseLike<{ data: infer U }>
   ? Exclude<U, null>

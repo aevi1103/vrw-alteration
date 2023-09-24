@@ -26,7 +26,13 @@ export default async function handler(
   res.status(405).end(); // Method Not Allowed
 }
 
-async function getAlterations({ paid }: { paid?: boolean }) {
+async function getAlterations({
+  paid,
+  uuid,
+}: {
+  paid?: boolean;
+  uuid?: string;
+}) {
   const query = supabase
     .from("alterations")
     .select(
@@ -39,6 +45,10 @@ async function getAlterations({ paid }: { paid?: boolean }) {
     )
     .order("paid", { ascending: true })
     .order("created_at", { ascending: true });
+
+  if (uuid) {
+    query.eq("uuid", uuid);
+  }
 
   if (paid !== undefined) {
     query.eq("paid", paid);
@@ -87,4 +97,5 @@ export interface Alteration {
   totalUnitPrice?: number;
   totalQty?: number;
   totalAmount?: number;
+  uuid?: string;
 }

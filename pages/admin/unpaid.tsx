@@ -18,11 +18,13 @@ import {
   Spacer,
   Radio,
   RadioGroup,
+  Center,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
 import { getTotalAmount } from ".";
 import { useRouter } from "next/router";
+import QRCode from "react-qr-code";
 
 export default function UpPaid() {
   const router = useRouter();
@@ -36,6 +38,12 @@ export default function UpPaid() {
   const unpaidItems = alterations?.filter((alteration) => !alteration.paid);
   const total = getTotalAmount(unpaidItems || []);
   const totalPaid = getTotalAmount(paidItems || []);
+
+  const origin = window?.location?.origin;
+  const qrCodeSize = 90;
+
+  const getUrl = (uuid: string) =>
+    `${origin}${router.basePath}/alteration/${uuid}}`;
 
   return (
     <Card>
@@ -100,55 +108,76 @@ export default function UpPaid() {
             const totalAmount = sumBy(amounts);
 
             return (
-              <Box key={alteration.id}>
-                <Heading size="xs" textTransform="uppercase" marginBottom={2}>
-                  <Flex>
-                    <Text
-                      size={"sm"}
-                      color={alteration.paid ? "green.500" : ""}
-                    >
-                      {alteration.customer_name} {alteration.paid && "- PAID"}
-                    </Text>
-                    <Spacer />
-                    <Text size={"sm"} fontStyle={"italic"}>
-                      {" "}
-                      {alteration.ticket_num}
-                    </Text>
-                  </Flex>
-                </Heading>
+              <Flex key={alteration.id} gap={5}>
+                <Box>
+                  <Center>
+                    <QRCode
+                      onClick={() =>
+                        router.push(`/alteration/${alteration.uuid}`)
+                      }
+                      size={qrCodeSize}
+                      style={{
+                        height: "auto",
+                        maxWidth: "100%",
+                        width: "100%",
+                        cursor: "pointer",
+                      }}
+                      value={getUrl(alteration.uuid || "")}
+                      viewBox={`0 0 ${qrCodeSize} ${qrCodeSize}`}
+                    />
+                  </Center>
+                </Box>
+                <Box>
+                  <Heading size="xs" textTransform="uppercase" marginBottom={2}>
+                    <Flex>
+                      <Text
+                        size={"sm"}
+                        color={alteration.paid ? "green.500" : ""}
+                      >
+                        {alteration.customer_name}
+                      </Text>
+                      <Spacer />
+                      <Text size={"sm"} fontStyle={"italic"}>
+                        {alteration.ticket_num}
+                      </Text>
+                    </Flex>
+                  </Heading>
 
-                {
-                  <Stack spacing="2">
-                    {alteration.alteration_items.map((item, i) => (
-                      <Box key={i}>
-                        <Text fontSize={13} fontWeight={"semibold"}>
-                          {item.items.description}: {item.qty} pc(s)
-                        </Text>
-                        <Box marginLeft={2}>
-                          {item.alteration_services.map((service) => (
-                            <Text
-                              key={service.prices.service}
-                              fontSize={12}
-                              fontStyle={"italic"}
-                            >
-                              {service.prices.service} -{" "}
-                              {numeral(service.prices.price).format("$0,0.00")}
-                            </Text>
-                          ))}
+                  {
+                    <Stack spacing="2">
+                      {alteration.alteration_items.map((item, i) => (
+                        <Box key={i}>
+                          <Text fontSize={13} fontWeight={"semibold"}>
+                            {item.items.description}: {item.qty} pc(s)
+                          </Text>
+                          <Box marginLeft={2}>
+                            {item.alteration_services.map((service) => (
+                              <Text
+                                key={service.prices.service}
+                                fontSize={12}
+                                fontStyle={"italic"}
+                              >
+                                {service.prices.service} -{" "}
+                                {numeral(service.prices.price).format(
+                                  "$0,0.00"
+                                )}
+                              </Text>
+                            ))}
+                          </Box>
                         </Box>
-                      </Box>
-                    ))}
+                      ))}
 
-                    <Text
-                      size={"sm"}
-                      color={alteration.paid ? "green.500" : "red.500"}
-                      fontWeight={"semibold"}
-                    >
-                      Total Amount: {numeral(totalAmount).format("$0,0.00")}
-                    </Text>
-                  </Stack>
-                }
-              </Box>
+                      <Text
+                        size={"sm"}
+                        color={alteration.paid ? "green.500" : "red.500"}
+                        fontWeight={"semibold"}
+                      >
+                        Total Amount: {numeral(totalAmount).format("$0,0.00")}
+                      </Text>
+                    </Stack>
+                  }
+                </Box>
+              </Flex>
             );
           })}
         </Stack>
