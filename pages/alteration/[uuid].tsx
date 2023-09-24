@@ -16,6 +16,7 @@ import {
   StackDivider,
   Text,
   VStack,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumby from "lodash.sumby";
@@ -63,6 +64,7 @@ export default function Alteration({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
+  const [isLarge] = useMediaQuery("(min-width: 768px)");
 
   const amounts = data.alteration_items.map((item) => {
     const qty = item.qty;
@@ -87,7 +89,7 @@ export default function Alteration({
     setUrl(res);
   }, [router, data]);
 
-  const qrCodeSize = 150;
+  const qrCodeSize = isLarge ? 150 : 80;
 
   return (
     <Container marginTop={10}>
