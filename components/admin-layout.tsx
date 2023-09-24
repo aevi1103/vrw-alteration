@@ -75,7 +75,7 @@ export default function AdminLayout({
                     History
                   </MenuItem>
                   <MenuItem onClick={() => router.push("/admin/unpaid")}>
-                    Unpaid Report
+                    Report
                   </MenuItem>
                   <MenuItem onClick={() => router.push("/admin/services")}>
                     Services

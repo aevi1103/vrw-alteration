@@ -37,7 +37,8 @@ async function getAlterations({ paid }: { paid?: boolean }) {
               prices(service, price))
           )`
     )
-    .order("created_at", { ascending: false });
+    .order("paid", { ascending: true })
+    .order("created_at", { ascending: true });
 
   if (paid !== undefined) {
     query.eq("paid", paid);
