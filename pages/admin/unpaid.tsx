@@ -66,19 +66,23 @@ export default function UpPaid() {
       <CardBody paddingTop={0}>
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
-            <Flex>
-              <Stat>
-                <StatLabel>Total Updaid</StatLabel>
-                <StatNumber color={"red.500"}>
-                  {numeral(total).format("$0,0.00")}
-                </StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Total Paid</StatLabel>
-                <StatNumber color={"green.500"}>
-                  {numeral(totalPaid).format("$0,0.00")}
-                </StatNumber>
-              </Stat>
+            <Flex gap={5}>
+              <Box>
+                <Stat>
+                  <StatLabel>Total Updaid</StatLabel>
+                  <StatNumber color={"red.500"}>
+                    {numeral(total).format("$0,0.00")}
+                  </StatNumber>
+                </Stat>
+              </Box>
+              <Box>
+                <Stat>
+                  <StatLabel>Total Paid</StatLabel>
+                  <StatNumber color={"green.500"}>
+                    {numeral(totalPaid).format("$0,0.00")}
+                  </StatNumber>
+                </Stat>
+              </Box>
             </Flex>
           </Box>
 
