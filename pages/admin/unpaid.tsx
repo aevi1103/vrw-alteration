@@ -6,7 +6,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Heading,
   Stack,
   StackDivider,
@@ -15,6 +14,8 @@ import {
   Stat,
   StatLabel,
   StatNumber,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
@@ -22,11 +23,12 @@ import { getTotalAmount } from ".";
 
 export default function UpPaid() {
   const { data: alterations } = useSWR<Alteration[]>(
-    "/api/alterations?paid=false",
+    "/api/alterations",
     fetcher
   );
 
-  const total = getTotalAmount(alterations || []);
+  const unpaidItems = alterations?.filter((alteration) => !alteration.paid);
+  const total = getTotalAmount(unpaidItems || []);
 
   return (
     <Card>
@@ -34,7 +36,7 @@ export default function UpPaid() {
         <Heading size="md">Unpaid Report</Heading>
       </CardHeader>
 
-      <CardBody>
+      <CardBody paddingTop={0}>
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
             <Stat>
@@ -60,8 +62,14 @@ export default function UpPaid() {
 
             return (
               <Box key={alteration.id}>
-                <Heading size="md" textTransform="uppercase" marginBottom={3}>
-                  {alteration.customer_name}
+                <Heading size="md" textTransform="uppercase" marginBottom={2}>
+                  <Flex>
+                    <Text color={alteration.paid ? "green.500" : ""}>
+                      {alteration.customer_name} {alteration.paid && "- PAID"}
+                    </Text>
+                    <Spacer />
+                    <Text fontStyle={"italic"}> {alteration.ticket_num}</Text>
+                  </Flex>
                 </Heading>
 
                 {
@@ -86,7 +94,10 @@ export default function UpPaid() {
                       </Box>
                     ))}
 
-                    <Text color={"red.500"} fontWeight={"semibold"}>
+                    <Text
+                      color={alteration.paid ? "green.500" : "red.500"}
+                      fontWeight={"semibold"}
+                    >
                       Total Amount: {numeral(totalAmount).format("$0,0.00")}
                     </Text>
                   </Stack>
