@@ -111,12 +111,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     role,
   };
 
-  // console.log("auth provider", {
-  //   supabase,
-  //   user,
-  //   authenticating,
-  // });
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

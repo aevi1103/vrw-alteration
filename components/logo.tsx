@@ -5,6 +5,7 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { AppMenu } from "./menu";
 import { useScrollY } from "@/hooks/useScrollY";
 import { useMenuHeaderStore } from "@/store/useMenuHeaderStore";
+import Link from "next/link";
 
 export const Logo = ({
   height = 20,
@@ -20,15 +21,18 @@ export const Logo = ({
   if (scrollY > 0) {
     return (
       <Flex padding={2} alignItems={"center"}>
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          style={{
-            objectFit: "contain",
-          }}
-          height={200}
-          width={200}
-        />
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            style={{
+              objectFit: "contain",
+            }}
+            height={200}
+            width={200}
+          />
+        </Link>
+
         {showMenu && (
           <>
             <Spacer />
@@ -53,15 +57,17 @@ export const Logo = ({
         marginTop={10}
         marginBottom={10}
       >
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          fill
-          priority
-          style={{
-            objectFit: "contain",
-          }}
-        />
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            fill
+            priority
+            style={{
+              objectFit: "contain",
+            }}
+          />
+        </Link>
       </Box>
       {isLarge && showMenu && <AppMenu />}
     </>
