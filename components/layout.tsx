@@ -6,7 +6,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     <Grid
       templateColumns="repeat(4, 1fr)"
       className="bg-pattern"
-      id="container"
+      // id="container"
       minHeight={"100vh"}
       maxHeight={"max-content"}
     >

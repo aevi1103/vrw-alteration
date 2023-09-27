@@ -20,6 +20,7 @@ import {
   RadioGroup,
   Center,
   Spinner,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
@@ -28,7 +29,7 @@ import { useRouter } from "next/router";
 import QRCode from "react-qr-code";
 import AdminLayout from "@/components/admin-layout";
 
-export default function UpPaid() {
+export default function Report() {
   const router = useRouter();
   const { paid } = router.query;
   const { data: alterations, isLoading } = useSWR<Alteration[]>(
@@ -56,8 +57,8 @@ export default function UpPaid() {
 
   return (
     <AdminLayout>
-      <Card>
-        <CardHeader>
+      <Stack spacing={5}>
+        <Box>
           <Flex gap={2} alignItems={"center"}>
             <Box>
               <Heading size="md">
@@ -83,9 +84,9 @@ export default function UpPaid() {
               </RadioGroup>
             </Box>
           </Flex>
-        </CardHeader>
+        </Box>
 
-        <CardBody paddingTop={0}>
+        <Box>
           <Stack divider={<StackDivider />} spacing="4">
             <Box>
               <Flex gap={5}>
@@ -205,8 +206,8 @@ export default function UpPaid() {
               })
             )}
           </Stack>
-        </CardBody>
-      </Card>
+        </Box>
+      </Stack>
     </AdminLayout>
   );
 }

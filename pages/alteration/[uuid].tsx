@@ -9,6 +9,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Center,
   Container,
   Flex,
   FormControl,
@@ -134,9 +135,9 @@ export default function Alteration({
   };
 
   return (
-    <Container marginTop={4}>
-      <Card>
-        <CardHeader>
+    <Container marginTop={10}>
+      <Stack>
+        <Box>
           <VStack>
             <Box marginBottom={4}>
               <Link href="/">
@@ -169,9 +170,9 @@ export default function Alteration({
             <Spacer />
             <Heading size="md">{data.ticket_num}</Heading>
           </Flex>
-        </CardHeader>
+        </Box>
 
-        <CardBody>
+        <Box>
           <Stack divider={<StackDivider />} spacing={3}>
             {data.alteration_items.map((item, i) => (
               <Box key={i}>
@@ -248,8 +249,8 @@ export default function Alteration({
               />
             </FormControl>
           )}
-        </CardBody>
-      </Card>
+        </Box>
+      </Stack>
     </Container>
   );
 }

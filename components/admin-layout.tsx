@@ -16,6 +16,7 @@ import React from "react";
 import Image from "next/image";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function AdminLayout({
   children,
@@ -32,7 +33,6 @@ export default function AdminLayout({
         templateColumns="repeat(4, 1fr)"
         templateRows={"max-content 1fr"}
         gap={2}
-        // backgroundColor={"gray.50"}
         minHeight={"100vh"}
         maxHeight={"max-content"}
       >
@@ -43,15 +43,23 @@ export default function AdminLayout({
             bgColor={"brand.primary"}
             shadow={"md"}
           >
-            <Image
-              src="/logo.png"
-              alt="Logo"
+            <Link
+              href={"/"}
               style={{
-                objectFit: "contain",
+                cursor: "pointer",
               }}
-              height={180}
-              width={180}
-            />
+            >
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                style={{
+                  objectFit: "contain",
+                }}
+                height={180}
+                width={180}
+              />
+            </Link>
+
             <Spacer />
             <Box>
               <Menu>
@@ -96,7 +104,7 @@ export default function AdminLayout({
           </Flex>
         </GridItem>
 
-        <GridItem colSpan={4} padding={3}>
+        <GridItem colSpan={4} padding={5}>
           {children}
         </GridItem>
       </Grid>
