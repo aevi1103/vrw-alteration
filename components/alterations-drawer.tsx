@@ -24,7 +24,7 @@ import * as Yup from "yup";
 import { mutate } from "swr";
 import { ItemOption, PriceCategoryOption } from "@/lib/types/alteration";
 import { ItemsForm } from "./items-form";
-import supabase from "@/lib/supabase-client";
+import supabase from "@/supabase/supabase-client";
 
 const size = "sm";
 const gap = 3;

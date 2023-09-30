@@ -16,10 +16,10 @@ import React, { useEffect } from "react";
 import AdminLayout from "@/components/admin-layout";
 import { AlterationTable } from "@/components/alterations-table";
 import useSWR from "swr";
-import { Alteration } from "../api/alterations";
 import { fetcher } from "@/lib/utils/fetcher";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
+import { Alteration } from "@/supabase/data/alteration";
 
 export const getTotalAmount = (alterations: Alteration[]) => {
   const itemsAmount = alterations.map((alteration) => {

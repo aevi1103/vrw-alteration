@@ -1,15 +1,9 @@
-import supabase from "@/lib/supabase-client";
+import supabase from "@/supabase/supabase-client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import React, { useEffect } from "react";
-import { Alteration } from "../api/alterations";
 import { DbResult } from "@/database.types";
 import {
   Box,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Center,
   Container,
   Flex,
   FormControl,
@@ -31,6 +25,7 @@ import QRCode from "react-qr-code";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { Alteration } from "@/supabase/data/alteration";
 
 export const getServerSideProps = (async (context) => {
   const { uuid } = context.params as { uuid: string };

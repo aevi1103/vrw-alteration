@@ -1,4 +1,4 @@
-import { Item } from "@/lib/types/alteration";
+import { Item, ItemFormValues } from "@/lib/types/alteration";
 import { create } from "zustand";
 
 type AlterationsState = {
@@ -8,6 +8,8 @@ type AlterationsState = {
   setItems: (items: Item[]) => void;
   expanded: boolean;
   toggleExpanded: () => void;
+  selectedFormItem: ItemFormValues | null | undefined;
+  setSelectedFormItem: (item: ItemFormValues | null | undefined) => void;
 };
 
 export const useAlterationsStore = create<AlterationsState>((set) => ({
@@ -18,4 +20,6 @@ export const useAlterationsStore = create<AlterationsState>((set) => ({
   itemsDrawerVisible: false,
   expanded: false,
   toggleExpanded: () => set((state) => ({ expanded: !state.expanded })),
+  selectedFormItem: null,
+  setSelectedFormItem: (item) => set(() => ({ selectedFormItem: item })),
 }));

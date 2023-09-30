@@ -12,9 +12,12 @@ import {
   TableContainer,
   Text,
   OrderedList,
+  Flex,
+  Button,
+  useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
-import supabase from "@/lib/supabase-client";
+import supabase from "@/supabase/supabase-client";
 import numeral from "numeral";
 import { mutate } from "swr";
 import {
@@ -23,8 +26,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Alteration } from "@/pages/api/alterations";
 import sumby from "lodash.sumby";
+import { CloseIcon, EditIcon } from "@chakra-ui/icons";
+import Link from "next/link";
+import { Alteration } from "@/supabase/data/alteration";
+import { DeleteDialog } from "./delete-dialog";
 
 const columnHelper = createColumnHelper<Alteration>();
 
@@ -34,6 +40,8 @@ export const AlterationTable = ({
   alterations: Alteration[];
 }) => {
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [id, setId] = React.useState<number>(0);
 
   const onPaid = async (id: number, checked: boolean) => {
     const { error } = await supabase
@@ -63,8 +71,30 @@ export const AlterationTable = ({
   };
 
   const columns = [
+    columnHelper.display({
+      header: "Edit",
+      id: "edit",
+      cell: (info) => (
+        <Flex alignItems={"center"}>
+          <Link href={`/admin/create/${info.row.original.id}`}>
+            <EditIcon fontSize={"xl"} color={"yellow.500"} />
+          </Link>
+          <Button
+            variant={"ghost"}
+            colorScheme="red"
+            onClick={() => {
+              setId(info.row.original.id);
+              onOpen();
+            }}
+          >
+            <CloseIcon />
+          </Button>
+        </Flex>
+      ),
+    }),
+
     columnHelper.accessor("paid", {
-      header: "Item",
+      header: "Paid",
       id: "item",
       cell: (info) => (
         <Switch
@@ -99,19 +129,6 @@ export const AlterationTable = ({
         return <Text>{numeral(total).format("0,0")}</Text>;
       },
     }),
-    columnHelper.accessor("totalUnitPrice", {
-      header: "Total Unit Price",
-      cell: (info) => {
-        const unitPrices = info.row.original.alteration_items
-          .map((item) =>
-            item.alteration_services.map((service) => service.prices.price)
-          )
-          .flat();
-
-        const total = unitPrices.reduce((acc, price) => acc + price, 0);
-        return <Text>{numeral(total).format("0,0")}</Text>;
-      },
-    }),
     columnHelper.accessor("totalAmount", {
       header: "Total Amount",
       cell: (info) => {
@@ -132,10 +149,10 @@ export const AlterationTable = ({
     columnHelper.accessor("alteration_items", {
       header: "Alterations",
       cell: (row) => (
-        <OrderedList>
+        <OrderedList fontSize={"xs"}>
           {row.getValue().map((item, i) => (
-            <ListItem key={i} marginBottom={3}>
-              <Text marginBottom={2}>
+            <ListItem key={i}>
+              <Text>
                 {item.items.description}: {item.qty}
               </Text>
               <UnorderedList>
@@ -172,37 +189,48 @@ export const AlterationTable = ({
   });
 
   return (
-    <TableContainer>
-      <Table variant="simple" size={"sm"}>
-        <Thead bg={"gray.100"}>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <Th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </Th>
-              ))}
-            </Tr>
-          ))}
-        </Thead>
+    <>
+      <TableContainer>
+        <Table variant="simple" size={"md"}>
+          <Thead bg={"gray.100"}>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <Th
+                    key={header.id}
+                    borderColor={"gray.200"}
+                    borderWidth={"thin"}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </Th>
+                ))}
+              </Tr>
+            ))}
+          </Thead>
 
-        <Tbody>
-          {table.getRowModel().rows.map((row) => (
-            <Tr key={row.id} bg={row.original.paid ? "green.100" : ""}>
-              {row.getVisibleCells().map((cell) => (
-                <Td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Td>
-              ))}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+          <Tbody>
+            {table.getRowModel().rows.map((row) => (
+              <Tr key={row.id} bg={row.original.paid ? "green.100" : ""}>
+                {row.getVisibleCells().map((cell) => (
+                  <Td
+                    key={cell.id}
+                    borderColor={"gray.200"}
+                    borderWidth={"thin"}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Td>
+                ))}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+      <DeleteDialog isOpen={isOpen} onClose={onClose} id={id} />
+    </>
   );
 };

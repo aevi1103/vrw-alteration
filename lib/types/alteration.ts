@@ -25,3 +25,10 @@ export type Item = {
   item: ItemOption;
   prices: PriceOption[];
 };
+
+export type ItemFormValues = {
+  id?: string;
+  qty: number;
+  item_id: ItemOption;
+  price_id: PriceOption[];
+};

@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Item } from "@/lib/types/alteration";
+import { Item, ItemFormValues } from "@/lib/types/alteration";
 import {
   ListItem,
   Table,
@@ -19,15 +19,29 @@ import {
   UnorderedList,
   Tbody,
   Tfoot,
+  Button,
+  Flex,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumby from "lodash.sumby";
+import { EditIcon, SmallCloseIcon } from "@chakra-ui/icons";
 
 const columnHelper = createColumnHelper<Item>();
 
 export const AlterationItemsTable = () => {
   // const table = useReactTable();
   const items = useAlterationsStore((state) => state.items);
+  const setItems = useAlterationsStore((state) => state.setItems);
+
+  useEffect(() => {
+    return () => {
+      setItems([]);
+    };
+  }, [setItems]);
+
+  const setSelectedFormItem = useAlterationsStore(
+    (state) => state.setSelectedFormItem
+  );
 
   const totalUnitPrice = sumby(items, (item) => sumby(item.prices, "price"));
   const totalQty = sumby(items, "qty");
@@ -40,12 +54,52 @@ export const AlterationItemsTable = () => {
   });
   const totalAmount = sumby(itemsAmount);
 
+  const onEditItem = (item: Item) => {
+    const formValues: ItemFormValues = {
+      id: item.id,
+      qty: item.qty,
+      item_id: item.item,
+      price_id: item.prices,
+    };
+    setSelectedFormItem(formValues);
+  };
+
+  const onDeleteItem = (original: Item) => {
+    const newItems = items.filter((item) => item.id !== original.id);
+    setItems(newItems);
+  };
+
   const columns = [
+    columnHelper.display({
+      header: "Edit",
+      id: "edit",
+      cell: (info) => (
+        <Flex gap={2} alignItems={"center"}>
+          <Button
+            size={"xs"}
+            variant={"ghost"}
+            onClick={() => onEditItem(info.row.original)}
+            color={"yellow.500"}
+          >
+            <EditIcon />
+          </Button>
+          <Button
+            // size={"xs"}
+            variant={"ghost"}
+            onClick={() => onDeleteItem(info.row.original)}
+            colorScheme="red"
+          >
+            <SmallCloseIcon />
+          </Button>
+        </Flex>
+      ),
+      footer: (row) => <Text>Total</Text>,
+    }),
     columnHelper.accessor("item.label", {
       header: "Item",
       id: "item",
       cell: (row) => <Text>{row.getValue()}</Text>,
-      footer: (row) => <Text>Total</Text>,
+      footer: (row) => null,
     }),
     columnHelper.accessor("qty", {
       header: "Qty",
@@ -58,7 +112,12 @@ export const AlterationItemsTable = () => {
       cell: (row) => (
         <UnorderedList>
           {row.getValue().map((price) => (
-            <ListItem key={price.value}>{price.label}</ListItem>
+            <ListItem key={price.value}>
+              {price.label}{" "}
+              <Text color={"gray.400"} as={"span"} fontStyle={"italic"}>
+                ({numeral(price.price).format("$0,0.00")})
+              </Text>
+            </ListItem>
           ))}
         </UnorderedList>
       ),
@@ -77,9 +136,13 @@ export const AlterationItemsTable = () => {
       <Table variant="simple" size={"sm"}>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <Tr key={headerGroup.id}>
+            <Tr key={headerGroup.id} bg={"gray.100"}>
               {headerGroup.headers.map((header) => (
-                <Th key={header.id}>
+                <Th
+                  key={header.id}
+                  borderColor={"gray.200"}
+                  borderWidth={"thin"}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -96,7 +159,7 @@ export const AlterationItemsTable = () => {
           {table.getRowModel().rows.map((row) => (
             <Tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <Td key={cell.id}>
+                <Td key={cell.id} borderColor={"gray.200"} borderWidth={"thin"}>
                   <Text maxWidth={10}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </Text>
@@ -110,7 +173,11 @@ export const AlterationItemsTable = () => {
           {table.getFooterGroups().map((footerGroup) => (
             <Tr key={footerGroup.id}>
               {footerGroup.headers.map((column) => (
-                <Th key={column.id}>
+                <Th
+                  key={column.id}
+                  borderColor={"gray.200"}
+                  borderWidth={"thin"}
+                >
                   {column.isPlaceholder
                     ? null
                     : flexRender(
@@ -123,10 +190,10 @@ export const AlterationItemsTable = () => {
           ))}
 
           <Tr>
-            <Th>
+            <Th colSpan={3} borderColor={"gray.200"} borderWidth={"thin"}>
               <Text>Total Amount</Text>
             </Th>
-            <Th colSpan={3}>
+            <Th borderColor={"gray.200"} borderWidth={"thin"}>
               <Text>{numeral(totalAmount).format("$0,0.00")}</Text>
             </Th>
           </Tr>

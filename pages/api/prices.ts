@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import supabase from "@/lib/supabase-client";
+import supabase from "@/supabase/supabase-client";
 import { DbResult } from "@/database.types";
 
 export default async function handler(

@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { AppMenu, Services, Gallery, About, ContactForm } from "@/components";
 import React from "react";
-import { supabase } from "@/lib/supabase-client";
+import { supabase } from "@/supabase/supabase-client";
 import { DbResult } from "@/database.types";
 import { AnimatedComponent, Header, Layout } from "@/components";
 import { AboutRecord } from "@/lib/types/about";

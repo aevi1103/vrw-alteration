@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import supabase from "@/lib/supabase-client";
-import { DbResult } from "@/database.types";
+import { getAlterations } from "@/supabase/data/alteration";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,10 +7,12 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const { paid } = req.query;
+      const { paid, uuid, id } = req.query;
 
       const data = await getAlterations({
         paid: paid === "true" ? true : paid === "false" ? false : undefined,
+        uuid: uuid as string,
+        id: id as string,
       });
 
       res.status(200).json(data);
@@ -24,78 +25,4 @@ export default async function handler(
   }
 
   res.status(405).end(); // Method Not Allowed
-}
-
-async function getAlterations({
-  paid,
-  uuid,
-}: {
-  paid?: boolean;
-  uuid?: string;
-}) {
-  const query = supabase
-    .from("alterations")
-    .select(
-      `*, 
-          alteration_items(qty,
-            items(description),
-             alteration_services(
-              prices(service, price))
-          )`
-    )
-    .order("paid", { ascending: true })
-    .order("created_at", { ascending: true });
-
-  if (uuid) {
-    query.eq("uuid", uuid);
-  }
-
-  if (paid !== undefined) {
-    query.eq("paid", paid);
-  }
-
-  const result: DbResult<typeof query> = await query;
-
-  if (result.error) {
-    throw result.error;
-  }
-
-  return result.data;
-}
-
-interface Price {
-  service: string;
-  price: number;
-}
-
-interface Item {
-  description: string;
-}
-
-interface AlterationService {
-  prices: Price;
-}
-
-interface AlterationItem {
-  qty: number;
-  items: Item;
-  alteration_services: AlterationService[];
-}
-
-export interface Alteration {
-  id: number;
-  created_at: string;
-  ticket_num: number;
-  sales_person: string;
-  customer_name: string;
-  customer_user_id: null | string;
-  remarks: string;
-  paid: boolean;
-  updated_at: null | string;
-  created_by: string;
-  alteration_items: AlterationItem[];
-  totalUnitPrice?: number;
-  totalQty?: number;
-  totalAmount?: number;
-  uuid?: string;
 }
