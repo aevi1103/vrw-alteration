@@ -1,11 +1,7 @@
 import React from "react";
 import useSWR from "swr";
-import { Alteration } from "../api/alterations";
 import { fetcher } from "@/lib/utils/fetcher";
 import {
-  Card,
-  CardHeader,
-  CardBody,
   Heading,
   Stack,
   StackDivider,
@@ -28,6 +24,7 @@ import { getTotalAmount } from ".";
 import { useRouter } from "next/router";
 import QRCode from "react-qr-code";
 import AdminLayout from "@/components/admin-layout";
+import { Alteration } from "@/supabase/data/alteration";
 
 export default function Report() {
   const router = useRouter();
