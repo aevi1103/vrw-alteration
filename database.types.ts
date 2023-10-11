@@ -196,6 +196,7 @@ export interface Database {
           category_id: string;
           created_at: string;
           id: string;
+          other: boolean;
           price: number;
           service: string;
         };
@@ -203,6 +204,7 @@ export interface Database {
           category_id: string;
           created_at?: string;
           id?: string;
+          other?: boolean;
           price: number;
           service: string;
         };
@@ -210,6 +212,7 @@ export interface Database {
           category_id?: string;
           created_at?: string;
           id?: string;
+          other?: boolean;
           price?: number;
           service?: string;
         };
@@ -286,6 +289,7 @@ export interface Database {
     };
   };
 }
+
 export type DbResult<T> = T extends PromiseLike<infer U> ? U : never;
 export type DbResultOk<T> = T extends PromiseLike<{ data: infer U }>
   ? Exclude<U, null>

@@ -22,6 +22,7 @@ import { ItemsForm } from "@/components/items-form";
 import { ItemOption, PriceCategoryOption } from "@/lib/types/alteration";
 import { useRouter } from "next/router";
 import { Alteration } from "@/supabase/data/alteration";
+import { NewPriceModal } from "./new-price-modal";
 
 const size = "sm";
 const gap = 3;
@@ -244,160 +245,176 @@ export const AlterationForm = ({
     setAlterationItems(items);
   }, [alteration, setFieldValue, setAlterationItems]);
 
+  const toggleNewPriceModal = useAlterationsStore(
+    (state) => state.toggleShowNewPriceModal
+  );
+
   return (
-    <SimpleGrid columns={1} gap={3}>
-      <Box>
-        <Heading size="md">Create New Alteration</Heading>
-      </Box>
+    <>
+      <SimpleGrid columns={1} gap={3}>
+        <Box>
+          <Heading size="md">Create New Alteration</Heading>
+        </Box>
 
-      <Box>
-        <SimpleGrid columns={1} gap={gap}>
-          <GridItem>
-            <form
-              onSubmit={handleSubmit}
-              style={{
-                width: "100%",
-              }}
-            >
-              <SimpleGrid gap={gap}>
-                <GridItem>
-                  <FormControl
-                    isInvalid={
-                      (errors.ticket_num && touched.ticket_num) as boolean
-                    }
-                  >
-                    <FormLabel htmlFor="ticket_num">Ticket #</FormLabel>
-                    <Input
-                      size={size}
-                      type="number"
-                      name="ticket_num"
-                      value={values.ticket_num}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <FormErrorMessage>{errors.ticket_num}</FormErrorMessage>
-                  </FormControl>
-                </GridItem>
+        <Box>
+          <SimpleGrid columns={1} gap={gap}>
+            <GridItem>
+              <form
+                onSubmit={handleSubmit}
+                style={{
+                  width: "100%",
+                }}
+              >
+                <SimpleGrid gap={gap}>
+                  <GridItem>
+                    <FormControl
+                      isInvalid={
+                        (errors.ticket_num && touched.ticket_num) as boolean
+                      }
+                    >
+                      <FormLabel htmlFor="ticket_num">Ticket #</FormLabel>
+                      <Input
+                        size={size}
+                        type="number"
+                        name="ticket_num"
+                        value={values.ticket_num}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <FormErrorMessage>{errors.ticket_num}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-                <GridItem>
-                  <FormControl
-                    isInvalid={
-                      (errors.sales_person && touched.sales_person) as boolean
-                    }
-                  >
-                    <FormLabel htmlFor="sales_person">Sales Person</FormLabel>
-                    <Input
-                      size={size}
-                      name="sales_person"
-                      value={values.sales_person}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
+                  <GridItem>
+                    <FormControl
+                      isInvalid={
+                        (errors.sales_person && touched.sales_person) as boolean
+                      }
+                    >
+                      <FormLabel htmlFor="sales_person">Sales Person</FormLabel>
+                      <Input
+                        size={size}
+                        name="sales_person"
+                        value={values.sales_person}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
-                    <FormErrorMessage>{errors.sales_person}</FormErrorMessage>
-                  </FormControl>
-                </GridItem>
+                      <FormErrorMessage>{errors.sales_person}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-                <GridItem>
-                  <FormControl
-                    isInvalid={
-                      (errors.customer_name && touched.customer_name) as boolean
-                    }
-                  >
-                    <FormLabel htmlFor="customer_name">Customer</FormLabel>
-                    <Input
-                      size={size}
-                      name="customer_name"
-                      value={values.customer_name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
+                  <GridItem>
+                    <FormControl
+                      isInvalid={
+                        (errors.customer_name &&
+                          touched.customer_name) as boolean
+                      }
+                    >
+                      <FormLabel htmlFor="customer_name">Customer</FormLabel>
+                      <Input
+                        size={size}
+                        name="customer_name"
+                        value={values.customer_name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
-                    <FormErrorMessage>{errors.customer_name}</FormErrorMessage>
-                  </FormControl>
-                </GridItem>
+                      <FormErrorMessage>
+                        {errors.customer_name}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-                <GridItem>
-                  <FormControl
-                    isInvalid={(errors.remarks && touched.remarks) as boolean}
-                  >
-                    <FormLabel htmlFor="remarks">Remarks</FormLabel>
-                    <Textarea
-                      size={size}
-                      name="remarks"
-                      value={values.remarks}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
+                  <GridItem>
+                    <FormControl
+                      isInvalid={(errors.remarks && touched.remarks) as boolean}
+                    >
+                      <FormLabel htmlFor="remarks">Remarks</FormLabel>
+                      <Textarea
+                        size={size}
+                        name="remarks"
+                        value={values.remarks}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
-                    <FormErrorMessage>{errors.remarks}</FormErrorMessage>
-                  </FormControl>
-                </GridItem>
+                      <FormErrorMessage>{errors.remarks}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
 
-                <GridItem>
-                  <FormControl
-                    isInvalid={(errors.paid && touched.paid) as boolean}
-                  >
-                    <FormLabel htmlFor="paid">Paid</FormLabel>
+                  <GridItem>
+                    <FormControl
+                      isInvalid={(errors.paid && touched.paid) as boolean}
+                    >
+                      <FormLabel htmlFor="paid">Paid</FormLabel>
 
-                    <Switch
-                      name="paid"
-                      isChecked={values.paid}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <FormErrorMessage>{errors.paid}</FormErrorMessage>
-                  </FormControl>
-                </GridItem>
-              </SimpleGrid>
-            </form>
-          </GridItem>
+                      <Switch
+                        name="paid"
+                        isChecked={values.paid}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <FormErrorMessage>{errors.paid}</FormErrorMessage>
+                    </FormControl>
+                  </GridItem>
+                </SimpleGrid>
+              </form>
+            </GridItem>
 
-          <GridItem>
-            <ItemsForm prices={prices} items={items} />
-          </GridItem>
-        </SimpleGrid>
-      </Box>
+            <GridItem>
+              <ItemsForm prices={prices} items={items} />
+            </GridItem>
+          </SimpleGrid>
+        </Box>
 
-      <Box>
-        <Button
-          size={"sm"}
-          colorScheme="green"
-          isLoading={isSubmitting}
-          type="submit"
-          onClick={() => handleSubmit()}
-          marginRight={2}
-        >
-          {alterationId
-            ? "Update"
-            : isSubmitting
-            ? "Creating..."
-            : "Create New"}
-        </Button>
+        <Box>
+          <Button
+            size={"sm"}
+            colorScheme="green"
+            isLoading={isSubmitting}
+            type="submit"
+            onClick={() => handleSubmit()}
+            marginRight={2}
+          >
+            {alterationId ? "Update" : isSubmitting ? "Creating..." : "Create"}
+          </Button>
 
-        <Button
-          size={"sm"}
-          variant="outline"
-          onClick={() => {
-            resetForm();
-            setAlterationItems([]);
-          }}
-          marginRight={2}
-        >
-          Reset
-        </Button>
+          <Button
+            size={"sm"}
+            variant="outline"
+            onClick={() => {
+              resetForm();
+              setAlterationItems([]);
+            }}
+            marginRight={2}
+          >
+            Reset
+          </Button>
 
-        <Button
-          size={"sm"}
-          variant="outline"
-          onClick={() => {
-            router.push("/admin");
-          }}
-          marginRight={2}
-        >
-          History
-        </Button>
-      </Box>
-    </SimpleGrid>
+          <Button
+            size={"sm"}
+            variant="outline"
+            onClick={() => {
+              router.push("/admin");
+            }}
+            marginRight={2}
+          >
+            History
+          </Button>
+
+          <Button
+            size={"sm"}
+            variant="outline"
+            onClick={toggleNewPriceModal}
+            marginRight={2}
+          >
+            Add New Alteration
+          </Button>
+        </Box>
+      </SimpleGrid>
+
+      <NewPriceModal />
+    </>
   );
 };

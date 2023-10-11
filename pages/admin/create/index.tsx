@@ -1,16 +1,14 @@
 import React from "react";
-import { ItemOption, PriceCategoryOption } from "@/lib/types/alteration";
+import { ItemOption } from "@/lib/types/alteration";
 import AdminLayout from "@/components/admin-layout";
 import { AlterationForm } from "@/components/alteration-form";
-import { getItems, getPrices } from "@/supabase/data/alteration";
+import { getItems } from "@/supabase/data/alteration";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils/fetcher";
 
-export default function Create({
-  prices,
-  items,
-}: {
-  prices: PriceCategoryOption[];
-  items: ItemOption[];
-}) {
+export default function Create({ items }: { items: ItemOption[] }) {
+  const { data: prices } = useSWR(`/api/prices`, fetcher);
+
   return (
     <AdminLayout>
       <AlterationForm prices={prices} items={items} />
@@ -19,11 +17,9 @@ export default function Create({
 }
 
 export async function getServerSideProps() {
-  const prices = await getPrices();
   const items = await getItems();
   return {
     props: {
-      prices,
       items,
     },
   };

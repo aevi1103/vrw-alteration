@@ -10,6 +10,8 @@ type AlterationsState = {
   toggleExpanded: () => void;
   selectedFormItem: ItemFormValues | null | undefined;
   setSelectedFormItem: (item: ItemFormValues | null | undefined) => void;
+  showNewPriceModal: boolean;
+  toggleShowNewPriceModal: () => void;
 };
 
 export const useAlterationsStore = create<AlterationsState>((set) => ({
@@ -22,4 +24,7 @@ export const useAlterationsStore = create<AlterationsState>((set) => ({
   toggleExpanded: () => set((state) => ({ expanded: !state.expanded })),
   selectedFormItem: null,
   setSelectedFormItem: (item) => set(() => ({ selectedFormItem: item })),
+  showNewPriceModal: false,
+  toggleShowNewPriceModal: () =>
+    set((state) => ({ showNewPriceModal: !state.showNewPriceModal })),
 }));

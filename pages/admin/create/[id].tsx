@@ -58,20 +58,3 @@ export default function AlterationPage({
     </AdminLayout>
   );
 }
-
-// export async function getServerSideProps(context: GetServerSideProps) {
-
-//   const id = context.params?.id;
-
-//   const prices = await getPrices();
-//   const items = await getItems();
-//   const alteration = await getAlteration({
-//     id:
-//   });
-//   return {
-//     props: {
-//       prices,
-//       items,
-//     },
-//   };
-// }

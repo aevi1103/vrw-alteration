@@ -93,7 +93,8 @@ export async function getServerSideProps() {
 async function getPrices() {
   const query = supabase
     .from("categories")
-    .select("*, prices(id, price, service))");
+    .select("*, prices(id, price, service))")
+    .is("prices.other", false);
 
   const prices: DbResult<typeof query> = await query;
   return prices.data;

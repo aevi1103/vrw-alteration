@@ -17,6 +17,8 @@ import {
   Center,
   Spinner,
   SimpleGrid,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
@@ -109,98 +111,130 @@ export default function Report() {
             {isLoading ? (
               <Spinner />
             ) : (
-              alterations?.map((alteration) => {
-                const amounts = alteration.alteration_items.map((item) => {
-                  const qty = item.qty;
-                  const totalUnitPrice = sumBy(
-                    item.alteration_services,
-                    "prices.price"
-                  );
-                  const totalAmount = totalUnitPrice * qty;
-                  return totalAmount;
-                });
+              <Flex wrap={"wrap"}>
+                {alterations?.map((alteration) => {
+                  const amounts = alteration.alteration_items.map((item) => {
+                    const qty = item.qty;
+                    const totalUnitPrice = sumBy(
+                      item.alteration_services,
+                      "prices.price"
+                    );
+                    const totalAmount = totalUnitPrice * qty;
+                    return totalAmount;
+                  });
 
-                const totalAmount = sumBy(amounts);
+                  const totalAmount = sumBy(amounts);
 
-                return (
-                  <Flex key={alteration.id} gap={5}>
-                    <Box width={qrCodeSize}>
-                      <Center>
-                        <QRCode
-                          onClick={() =>
-                            router.push(`/alteration/${alteration.uuid}`)
-                          }
-                          size={qrCodeSize}
-                          style={{
-                            height: "auto",
-                            maxWidth: "100%",
-                            width: "100%",
-                            cursor: "pointer",
-                          }}
-                          value={getUrl(alteration.uuid || "")}
-                          viewBox={`0 0 ${qrCodeSize} ${qrCodeSize}`}
-                        />
+                  return (
+                    <Box
+                      key={alteration.id}
+                      flexGrow={1}
+                      flexBasis={"250px"}
+                      padding={4}
+                      m={1}
+                      border="1px solid #e2e8f0"
+                      borderRadius="md"
+                      bg={"gray.50"}
+                      // shadow={"md"}
+                      position={"relative"}
+                    >
+                      <Center marginY={4}>
+                        <Box width={qrCodeSize}>
+                          <QRCode
+                            onClick={() =>
+                              router.push(`/alteration/${alteration.uuid}`)
+                            }
+                            size={qrCodeSize}
+                            style={{
+                              height: "auto",
+                              maxWidth: "100%",
+                              width: "100%",
+                              cursor: "pointer",
+                            }}
+                            value={getUrl(alteration.uuid || "")}
+                            viewBox={`0 0 ${qrCodeSize} ${qrCodeSize}`}
+                          />
+                        </Box>
                       </Center>
-                    </Box>
 
-                    <Box width={"100%"}>
-                      <Heading
-                        size="xs"
-                        textTransform="uppercase"
-                        marginBottom={2}
-                      >
-                        <Flex>
-                          <Text
-                            size={"sm"}
-                            color={alteration.paid ? "green.500" : ""}
+                      <Flex gap={5}>
+                        <Box width={"100%"}>
+                          <Heading
+                            size="xs"
+                            textTransform="uppercase"
+                            marginBottom={2}
                           >
-                            {alteration.customer_name}
-                          </Text>
-                          <Spacer />
-                          <Text size={"sm"} fontStyle={"italic"}>
-                            {alteration.ticket_num}
-                          </Text>
-                        </Flex>
-                      </Heading>
-
-                      {
-                        <Stack spacing="2">
-                          {alteration.alteration_items.map((item, i) => (
-                            <Box key={i}>
-                              <Text fontSize={13} fontWeight={"semibold"}>
-                                {item.items.description}: {item.qty} pc(s)
+                            <Flex>
+                              <Text
+                                size={"sm"}
+                                color={alteration.paid ? "green.500" : ""}
+                              >
+                                {alteration.customer_name}
                               </Text>
-                              <Box marginLeft={2}>
-                                {item.alteration_services.map((service) => (
-                                  <Text
-                                    key={service.prices.service}
-                                    fontSize={12}
-                                    fontStyle={"italic"}
-                                  >
-                                    {service.prices.service} -{" "}
-                                    {numeral(service.prices.price).format(
-                                      "$0,0.00"
-                                    )}
-                                  </Text>
-                                ))}
-                              </Box>
-                            </Box>
-                          ))}
+                              <Spacer />
+                              <Text size={"sm"} fontStyle={"italic"}>
+                                {alteration.ticket_num}
+                              </Text>
+                            </Flex>
+                          </Heading>
 
-                          <Text
-                            size={"sm"}
-                            color={alteration.paid ? "green.500" : "red.500"}
-                            fontWeight={"semibold"}
-                          >
-                            Total Amount:{" "}
-                            {numeral(totalAmount).format("$0,0.00")}
-                          </Text>
-                        </Stack>
-                      }
+                          {
+                            <Stack spacing="2">
+                              {alteration.alteration_items.map((item, i) => (
+                                <Box key={i}>
+                                  <Text fontSize={13} fontWeight={"semibold"}>
+                                    {item.items.description}: {item.qty} pc(s)
+                                  </Text>
+                                  <Box marginLeft={2}>
+                                    {item.alteration_services.map((service) => (
+                                      <Text
+                                        key={service.prices.service}
+                                        fontSize={12}
+                                        fontStyle={"italic"}
+                                      >
+                                        {service.prices.service} -{" "}
+                                        {numeral(service.prices.price).format(
+                                          "$0,0.00"
+                                        )}
+                                      </Text>
+                                    ))}
+                                  </Box>
+                                </Box>
+                              ))}
+
+                              <Text
+                                size={"sm"}
+                                color={
+                                  alteration.paid ? "green.500" : "red.500"
+                                }
+                                fontWeight={"semibold"}
+                              >
+                                Total Amount:{" "}
+                                {numeral(totalAmount).format("$0,0.00")}
+                              </Text>
+                            </Stack>
+                          }
+                        </Box>
+                      </Flex>
+                      <Box
+                        position={"absolute"}
+                        right={2}
+                        top={-2}
+                        zIndex={999}
+                      >
+                        <Text
+                          fontSize={10}
+                          fontStyle={"italic"}
+                          marginTop={4}
+                          color={"gray.400"}
+                        >
+                          {new Date(alteration.created_at).toLocaleString()}
+                        </Text>
+                      </Box>
                     </Box>
-                  </Flex>
-                );
-              })
+                  );
+                })}
+              </Flex>
             )}
           </Stack>
         </Box>

@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import supabase from "@/supabase/supabase-client";
-import { DbResult } from "@/database.types";
+import { getPrices } from "@/supabase/data/alteration";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,13 +7,8 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const query = supabase
-        .from("categories")
-        .select("*, prices(id, price, service))");
-
-      const prices: DbResult<typeof query> = await query;
-
-      res.status(200).json(prices.data);
+      const prices = await getPrices();
+      res.status(200).json(prices);
     } catch (error) {
       console.error(error);
       res.status(500).json(error);
