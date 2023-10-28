@@ -20,7 +20,6 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Divider,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
@@ -29,6 +28,9 @@ import { useRouter } from "next/router";
 import QRCode from "react-qr-code";
 import AdminLayout from "@/components/admin-layout";
 import { Alteration } from "@/supabase/data/alteration";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 export default function Report() {
   const router = useRouter();
@@ -83,43 +85,6 @@ export default function Report() {
                 }
               >
                 <Stack direction="row">
-                  <FormControl>
-                    <HStack alignItems={"center"}>
-                      <FormLabel size={"md"} fontSize={"xs"} margin={0}>
-                        From
-                      </FormLabel>
-                      <Input
-                        size="sm"
-                        type="date"
-                        defaultValue={start as string}
-                        onChange={(e) => {
-                          router.push({
-                            pathname: router.pathname,
-                            query: { ...query, start: e.target.value },
-                          });
-                        }}
-                      />
-                    </HStack>
-                  </FormControl>
-                  <FormControl>
-                    <HStack alignItems={"center"}>
-                      <FormLabel size={"md"} fontSize={"xs"} margin={0}>
-                        To
-                      </FormLabel>
-                      <Input
-                        size="sm"
-                        type="date"
-                        defaultValue={end as string}
-                        onChange={(e) => {
-                          router.push({
-                            pathname: router.pathname,
-                            query: { ...query, end: e.target.value },
-                          });
-                        }}
-                      />
-                    </HStack>
-                  </FormControl>
-
                   <Radio value="true">Paid</Radio>
                   <Radio value="false">Unpaid</Radio>
                   <Radio value="">All</Radio>
@@ -127,6 +92,47 @@ export default function Report() {
               </RadioGroup>
             </Box>
           </Flex>
+        </Box>
+
+        <Box>
+          <HStack alignItems={"center"}>
+            <FormControl>
+              <HStack alignItems={"center"}>
+                <FormLabel size={"md"} fontSize={"xs"} margin={0}>
+                  From
+                </FormLabel>
+                <Input
+                  size="sm"
+                  type="date"
+                  defaultValue={start as string}
+                  onChange={(e) => {
+                    router.push({
+                      pathname: router.pathname,
+                      query: { ...query, start: e.target.value },
+                    });
+                  }}
+                />
+              </HStack>
+            </FormControl>
+            <FormControl>
+              <HStack alignItems={"center"}>
+                <FormLabel size={"md"} fontSize={"xs"} margin={0}>
+                  To
+                </FormLabel>
+                <Input
+                  size="sm"
+                  type="date"
+                  defaultValue={end as string}
+                  onChange={(e) => {
+                    router.push({
+                      pathname: router.pathname,
+                      query: { ...query, end: e.target.value },
+                    });
+                  }}
+                />
+              </HStack>
+            </FormControl>
+          </HStack>
         </Box>
 
         <Box>
@@ -179,7 +185,6 @@ export default function Report() {
                       border="1px solid #e2e8f0"
                       borderRadius="md"
                       bg={"gray.50"}
-                      // shadow={"md"}
                       position={"relative"}
                     >
                       <Center marginY={4}>
@@ -200,6 +205,12 @@ export default function Report() {
                           />
                         </Box>
                       </Center>
+
+                      {alteration.paid && (
+                        <Center marginTop={2}>
+                          <Heading size={"lg"}>PAID</Heading>
+                        </Center>
+                      )}
 
                       <Flex gap={5}>
                         <Box width={"100%"}>
@@ -272,7 +283,10 @@ export default function Report() {
                           marginTop={4}
                           color={"gray.400"}
                         >
-                          {new Date(alteration.created_at).toLocaleString()}
+                          {dayjs(alteration.created_at)
+                            .utc()
+                            .format("MM/DD/YYYY h:mm A")}{" "}
+                          UTC
                         </Text>
                       </Box>
                     </Box>
