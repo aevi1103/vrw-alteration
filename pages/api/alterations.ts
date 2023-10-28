@@ -7,12 +7,14 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const { paid, uuid, id } = req.query;
+      const { paid, uuid, id, startDate, endDate } = req.query;
 
       const data = await getAlterations({
         paid: paid === "true" ? true : paid === "false" ? false : undefined,
         uuid: uuid as string,
         id: id as string,
+        startDate: startDate as string,
+        endDate: endDate as string,
       });
 
       res.status(200).json(data);

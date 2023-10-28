@@ -1,6 +1,9 @@
 import { DbResult } from "@/database.types";
 import { PriceCategoryOption } from "@/lib/types/alteration";
 import supabase from "../supabase-client";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 interface Price {
   id: string;
@@ -91,12 +94,16 @@ interface GetAlterationsProps {
   uuid?: string;
   paid?: boolean;
   id?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export async function getAlterations({
   uuid,
   paid,
   id,
+  startDate,
+  endDate,
 }: GetAlterationsProps): Promise<Alteration[]> {
   const query = supabase
     .from("alterations")
@@ -108,8 +115,8 @@ export async function getAlterations({
               prices(*))
           )`
     )
-    .order("paid", { ascending: true })
-    .order("created_at", { ascending: true });
+    // .order("paid", { ascending: true })
+    .order("created_at", { ascending: false });
 
   if (uuid) {
     query.eq("uuid", uuid);
@@ -121,6 +128,20 @@ export async function getAlterations({
 
   if (paid !== undefined) {
     query.eq("paid", paid);
+  }
+
+  console.log({
+    startDate,
+    endDate,
+  });
+
+  if (startDate && endDate) {
+    const startStr = dayjs(startDate).format("YYYY-MM-DD HH:mm:ss");
+    const endStr = dayjs(endDate).endOf("day").format("YYYY-MM-DD HH:mm:ss");
+
+    console.log(startStr, endStr);
+
+    query.gte("created_at", startStr).lte("created_at", endStr);
   }
 
   const result: DbResult<typeof query> = await query;

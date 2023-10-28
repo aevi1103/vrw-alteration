@@ -25,6 +25,7 @@
     "animate.css": "^4.1.1",
     "beautiful-react-hooks": "^5.0.0",
     "chakra-react-select": "^4.7.2",
+    "dayjs": "^1.11.10",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
     "faker": "^6.6.6",

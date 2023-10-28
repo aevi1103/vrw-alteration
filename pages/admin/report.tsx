@@ -16,9 +16,11 @@ import {
   RadioGroup,
   Center,
   Spinner,
-  SimpleGrid,
-  Grid,
-  GridItem,
+  Input,
+  FormControl,
+  FormLabel,
+  HStack,
+  Divider,
 } from "@chakra-ui/react";
 import numeral from "numeral";
 import sumBy from "lodash.sumby";
@@ -30,9 +32,13 @@ import { Alteration } from "@/supabase/data/alteration";
 
 export default function Report() {
   const router = useRouter();
-  const { paid } = router.query;
+  const query = router.query;
+  const { paid, start, end } = router.query;
+
   const { data: alterations, isLoading } = useSWR<Alteration[]>(
-    `/api/alterations?paid=${paid}`,
+    `/api/alterations?paid=${paid}&startDate=${start ?? ""}&endDate=${
+      end ?? ""
+    }`,
     fetcher
   );
 
@@ -65,6 +71,7 @@ export default function Report() {
                 Report
               </Heading>
             </Box>
+            <Spacer />
             <Box>
               <RadioGroup
                 size={"sm"}
@@ -76,6 +83,43 @@ export default function Report() {
                 }
               >
                 <Stack direction="row">
+                  <FormControl>
+                    <HStack alignItems={"center"}>
+                      <FormLabel size={"md"} fontSize={"xs"} margin={0}>
+                        From
+                      </FormLabel>
+                      <Input
+                        size="sm"
+                        type="date"
+                        defaultValue={start as string}
+                        onChange={(e) => {
+                          router.push({
+                            pathname: router.pathname,
+                            query: { ...query, start: e.target.value },
+                          });
+                        }}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl>
+                    <HStack alignItems={"center"}>
+                      <FormLabel size={"md"} fontSize={"xs"} margin={0}>
+                        To
+                      </FormLabel>
+                      <Input
+                        size="sm"
+                        type="date"
+                        defaultValue={end as string}
+                        onChange={(e) => {
+                          router.push({
+                            pathname: router.pathname,
+                            query: { ...query, end: e.target.value },
+                          });
+                        }}
+                      />
+                    </HStack>
+                  </FormControl>
+
                   <Radio value="true">Paid</Radio>
                   <Radio value="false">Unpaid</Radio>
                   <Radio value="">All</Radio>
